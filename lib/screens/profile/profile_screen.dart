@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../core/state/auth_model.dart';
 import '../../core/state/cart_model.dart';
 import '../../core/state/favorites_model.dart';
+import '../../core/state/orders_model.dart';
 import '../../core/theme/app_colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -173,12 +174,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
             width: double.infinity,
             child: OutlinedButton.icon(
               onPressed: () async {
+                final cart = context.read<CartModel>();
+                final favorites = context.read<FavoritesModel>();
+                final orders = context.read<OrdersModel>();
+                final navigator = Navigator.of(context);
+
                 await authModel.signOut();
 
-                context.read<CartModel>().clear();
-                context.read<FavoritesModel>().clear();
-                if (!mounted) return;
-                Navigator.pushReplacementNamed(context, '/login');
+                cart.clear();
+                favorites.clear();
+                orders.clear();
+                navigator.pushNamedAndRemoveUntil('/login', (route) => false);
               },
               icon: const Icon(Icons.logout, color: AppColors.danger),
               label: const Text(
