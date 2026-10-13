@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "395561619175",
+    "project_id": "teach-zone-adec7",
+    "storage_bucket": "teach-zone-adec7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:395561619175:android:effa456c708e41df7d5c42",
+        "android_client_info": {
+          "package_name": "com.example.teachzone"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCJFqI2g5w4LS_vFaoK2MGTE4CvahI9wN8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
