@@ -20,17 +20,16 @@ class AuthService {
   bool get isSignedIn => _auth.currentUser != null;
 
   /// Signs in with [email] and [password] with a timeout so UI never hangs indefinitely.
-  Future<void> signInWithEmailAndPassword(
-    String email,
-    String password,
-  ) async {
+  Future<void> signInWithEmailAndPassword(String email, String password) async {
     await _auth
         .signInWithEmailAndPassword(email: email, password: password)
         .timeout(
           const Duration(seconds: 15),
-          onTimeout: () => throw TimeoutException(
-            'Connection timed out. Check your internet connection.',
-          ),
+          onTimeout:
+              () =>
+                  throw TimeoutException(
+                    'Connection timed out. Check your internet connection.',
+                  ),
         );
   }
 
@@ -44,15 +43,14 @@ class AuthService {
   ) async {
     // 1. Create the user in Firebase Authentication with timeout
     final credential = await _auth
-        .createUserWithEmailAndPassword(
-          email: email,
-          password: password,
-        )
+        .createUserWithEmailAndPassword(email: email, password: password)
         .timeout(
           const Duration(seconds: 15),
-          onTimeout: () => throw TimeoutException(
-            'Authentication service timed out. Check your internet connection.',
-          ),
+          onTimeout:
+              () =>
+                  throw TimeoutException(
+                    'Authentication service timed out. Check your internet connection.',
+                  ),
         );
 
     final user = credential.user!;
@@ -90,9 +88,11 @@ class AuthService {
         .sendPasswordResetEmail(email: email)
         .timeout(
           const Duration(seconds: 12),
-          onTimeout: () => throw TimeoutException(
-            'Request timed out. Check your internet connection.',
-          ),
+          onTimeout:
+              () =>
+                  throw TimeoutException(
+                    'Request timed out. Check your internet connection.',
+                  ),
         );
   }
 

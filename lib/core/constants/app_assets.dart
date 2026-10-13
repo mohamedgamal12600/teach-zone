@@ -51,7 +51,8 @@ class AppAssets {
   static const String ankerPowercore = '$_base/anker_powercore.png';
   static const String samsung65wCharger = '$_base/samsung_65w_charger.png';
   static const String magsafeCharger = '$_base/magsafe_charger.png';
-  static const String dellUltrasharpU2724d = '$_base/dell_ultrasharp_u2724d.png';
+  static const String dellUltrasharpU2724d =
+      '$_base/dell_ultrasharp_u2724d.png';
   static const String razerDeathadderV3 = '$_base/razer_deathadder_v3.png';
   static const String streamDeckMk2 = '$_base/stream_deck_mk2.png';
 }

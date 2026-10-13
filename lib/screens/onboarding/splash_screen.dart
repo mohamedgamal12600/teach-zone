@@ -72,10 +72,10 @@ class _SplashScreenState extends State<SplashScreen>
               Text(
                 'TechZone',
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontSize: 36,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.textPrimary,
-                    ),
+                  fontSize: 36,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.textPrimary,
+                ),
               ),
               const SizedBox(height: 8),
               Text(
@@ -89,4 +89,3 @@ class _SplashScreenState extends State<SplashScreen>
     );
   }
 }
-

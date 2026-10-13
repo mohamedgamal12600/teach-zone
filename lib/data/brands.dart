@@ -42,7 +42,8 @@ const List<Brand> brands = [
   ),
   Brand(
     name: 'Google',
-    logoUrl: 'https://www.google.com/s2/favicons?domain=store.google.com&sz=128',
+    logoUrl:
+        'https://www.google.com/s2/favicons?domain=store.google.com&sz=128',
   ),
   Brand(
     name: 'OnePlus',

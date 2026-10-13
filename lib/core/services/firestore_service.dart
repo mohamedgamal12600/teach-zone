@@ -14,13 +14,14 @@ class FirestoreService {
 
   /// Fetches orders for [uid] from Firestore, ordered by creation time descending.
   Future<List<AppOrder>> fetchOrders(String uid) async {
-    final snapshot = await _ordersRef(uid)
-        .orderBy('createdAt', descending: true)
-        .get();
+    final snapshot =
+        await _ordersRef(uid).orderBy('createdAt', descending: true).get();
 
     return snapshot.docs
-        .map((doc) =>
-            AppOrder.fromDoc(doc as DocumentSnapshot<Map<String, dynamic>>))
+        .map(
+          (doc) =>
+              AppOrder.fromDoc(doc as DocumentSnapshot<Map<String, dynamic>>),
+        )
         .toList();
   }
 
@@ -36,16 +37,17 @@ class FirestoreService {
     required String phone,
     required String paymentMethod,
   }) async {
-    final lineItems = items
-        .map(
-          (ci) => OrderLineItem(
-            productId: ci.product.id,
-            productName: ci.product.name,
-            unitPrice: ci.product.price,
-            quantity: ci.quantity,
-          ),
-        )
-        .toList();
+    final lineItems =
+        items
+            .map(
+              (ci) => OrderLineItem(
+                productId: ci.product.id,
+                productName: ci.product.name,
+                unitPrice: ci.product.price,
+                quantity: ci.quantity,
+              ),
+            )
+            .toList();
 
     final docRef = _ordersRef(uid).doc();
     final now = Timestamp.now();

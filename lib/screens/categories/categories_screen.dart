@@ -22,9 +22,12 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   ];
   int _category = 0;
 
-  List<Product> get _visible => _category == 0
-      ? products.toList()
-      : products.where((p) => p.category == _categories[_category]).toList();
+  List<Product> get _visible =>
+      _category == 0
+          ? products.toList()
+          : products
+              .where((p) => p.category == _categories[_category])
+              .toList();
 
   @override
   Widget build(BuildContext context) {
@@ -57,49 +60,52 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
           ),
           const SizedBox(height: 12),
           Expanded(
-            child: items.isEmpty
-                ? Center(
-                    child: Text('No products found', style: text.bodyMedium),
-                  )
-                : GridView.builder(
-                    padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      mainAxisSpacing: 12,
-                      crossAxisSpacing: 12,
-                      childAspectRatio: 0.62,
+            child:
+                items.isEmpty
+                    ? Center(
+                      child: Text('No products found', style: text.bodyMedium),
+                    )
+                    : GridView.builder(
+                      padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            mainAxisSpacing: 12,
+                            crossAxisSpacing: 12,
+                            childAspectRatio: 0.62,
+                          ),
+                      itemCount: items.length,
+                      itemBuilder: (context, i) {
+                        final p = items[i];
+                        final isFav = context.watch<FavoritesModel>().contains(
+                          p.id,
+                        );
+                        return ProductCard(
+                          product: p,
+                          isFavorite: isFav,
+                          onFavorite:
+                              () => context.read<FavoritesModel>().toggle(p.id),
+                          onTap:
+                              () => Navigator.pushNamed(
+                                context,
+                                '/product_details',
+                                arguments: p,
+                              ),
+                          onAddToCart: () {
+                            context.read<CartModel>().add(p);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('${p.name} added to cart'),
+                                duration: const Duration(seconds: 1),
+                              ),
+                            );
+                          },
+                        );
+                      },
                     ),
-                    itemCount: items.length,
-                    itemBuilder: (context, i) {
-                      final p = items[i];
-                      final isFav =
-                          context.watch<FavoritesModel>().contains(p.id);
-                      return ProductCard(
-                        product: p,
-                        isFavorite: isFav,
-                        onFavorite: () =>
-                            context.read<FavoritesModel>().toggle(p.id),
-                        onTap: () => Navigator.pushNamed(
-                          context,
-                          '/product_details',
-                          arguments: p,
-                        ),
-                        onAddToCart: () {
-                          context.read<CartModel>().add(p);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('${p.name} added to cart'),
-                              duration: const Duration(seconds: 1),
-                            ),
-                          );
-                        },
-                      );
-                    },
-                  ),
           ),
         ],
       ),
     );
   }
 }
-

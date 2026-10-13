@@ -92,8 +92,10 @@ class AppTheme {
         ),
         prefixIconColor: AppColors.textSecondary,
         suffixIconColor: AppColors.textSecondary,
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 14,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppRadius.field),
           borderSide: BorderSide.none,
@@ -175,9 +177,10 @@ class AppTheme {
         ),
         iconTheme: WidgetStateProperty.resolveWith(
           (states) => IconThemeData(
-            color: states.contains(WidgetState.selected)
-                ? AppColors.textPrimary
-                : AppColors.textSecondary,
+            color:
+                states.contains(WidgetState.selected)
+                    ? AppColors.textPrimary
+                    : AppColors.textSecondary,
           ),
         ),
       ),

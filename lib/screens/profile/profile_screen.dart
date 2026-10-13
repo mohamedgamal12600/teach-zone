@@ -23,9 +23,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Profile')),
-      body: user == null
-          ? _buildNotSignedIn(context)
-          : _buildSignedIn(context, user, authModel),
+      body:
+          user == null
+              ? _buildNotSignedIn(context)
+              : _buildSignedIn(context, user, authModel),
     );
   }
 
@@ -34,9 +35,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.person_outline, size: 72, color: AppColors.textMuted),
+          const Icon(
+            Icons.person_outline,
+            size: 72,
+            color: AppColors.textMuted,
+          ),
           const SizedBox(height: 16),
-          Text('You are not signed in', style: Theme.of(context).textTheme.titleMedium),
+          Text(
+            'You are not signed in',
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
           const SizedBox(height: 16),
           ElevatedButton(
             onPressed: () => Navigator.pushNamed(context, '/login'),
@@ -80,7 +88,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
                     const SizedBox(height: 4),
-                    Text(user.email ?? '', style: Theme.of(context).textTheme.bodyMedium),
+                    Text(
+                      user.email ?? '',
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
                     if (user.metadata.creationTime != null) ...[
                       const SizedBox(height: 4),
                       Text(
@@ -99,35 +110,38 @@ class _ProfileScreenState extends State<ProfileScreen> {
             icon: Icons.edit_outlined,
             label: 'Edit Profile',
             onTap: () {
-              final ctrl = TextEditingController(
-                text: user.displayName ?? '',
-              );
+              final ctrl = TextEditingController(text: user.displayName ?? '');
               showDialog(
                 context: context,
-                builder: (ctx) => AlertDialog(
-                  backgroundColor: AppColors.surface,
-                  title: const Text('Edit Name',
-                      style: TextStyle(color: AppColors.textPrimary)),
-                  content: TextField(
-                    controller: ctrl,
-                    decoration: const InputDecoration(hintText: 'Full name'),
-                  ),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(ctx),
-                      child: const Text('Cancel'),
+                builder:
+                    (ctx) => AlertDialog(
+                      backgroundColor: AppColors.surface,
+                      title: const Text(
+                        'Edit Name',
+                        style: TextStyle(color: AppColors.textPrimary),
+                      ),
+                      content: TextField(
+                        controller: ctrl,
+                        decoration: const InputDecoration(
+                          hintText: 'Full name',
+                        ),
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(ctx),
+                          child: const Text('Cancel'),
+                        ),
+                        ElevatedButton(
+                          onPressed: () async {
+                            final name = ctrl.text.trim();
+                            Navigator.pop(ctx);
+                            if (name.isEmpty) return;
+                            await authModel.updateProfile(fullName: name);
+                          },
+                          child: const Text('Save'),
+                        ),
+                      ],
                     ),
-                    ElevatedButton(
-                      onPressed: () async {
-                        final name = ctrl.text.trim();
-                        Navigator.pop(ctx);
-                        if (name.isEmpty) return;
-                        await authModel.updateProfile(fullName: name);
-                      },
-                      child: const Text('Save'),
-                    ),
-                  ],
-                ),
               );
             },
           ),
@@ -160,7 +174,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: OutlinedButton.icon(
               onPressed: () async {
                 await authModel.signOut();
-                
+
                 context.read<CartModel>().clear();
                 context.read<FavoritesModel>().clear();
                 if (!mounted) return;
@@ -189,9 +203,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Text(
         title.toUpperCase(),
         style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              letterSpacing: 1.2,
-              color: AppColors.textMuted,
-            ),
+          letterSpacing: 1.2,
+          color: AppColors.textMuted,
+        ),
       ),
     );
   }

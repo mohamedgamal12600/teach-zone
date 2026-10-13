@@ -5,10 +5,7 @@ class Brand {
   final String name;
   final String logoUrl;
 
-  const Brand({
-    required this.name,
-    required this.logoUrl,
-  });
+  const Brand({required this.name, required this.logoUrl});
 
   @override
   bool operator ==(Object other) =>

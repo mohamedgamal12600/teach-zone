@@ -42,7 +42,11 @@ class CartScreen extends StatelessWidget {
     );
   }
 
-  Widget _header(BuildContext context, CartModel cartModel, AuthModel authModel) {
+  Widget _header(
+    BuildContext context,
+    CartModel cartModel,
+    AuthModel authModel,
+  ) {
     final text = Theme.of(context).textTheme;
     return Padding(
       padding: const EdgeInsets.fromLTRB(22, 16, 22, 0),
@@ -59,7 +63,11 @@ class CartScreen extends StatelessWidget {
     );
   }
 
-  Widget _footer(BuildContext context, CartModel cartModel, AuthModel authModel) {
+  Widget _footer(
+    BuildContext context,
+    CartModel cartModel,
+    AuthModel authModel,
+  ) {
     return Container(
       padding: const EdgeInsets.fromLTRB(22, 16, 22, 24),
       decoration: const BoxDecoration(
@@ -75,9 +83,12 @@ class CartScreen extends StatelessWidget {
           const SizedBox(height: 8),
           _SummaryRow(
             label: 'Delivery',
-            value: cartModel.deliveryCharge == 0
-                ? 'Free'
-                : PriceFormatter.formatWithCurrency(cartModel.deliveryCharge),
+            value:
+                cartModel.deliveryCharge == 0
+                    ? 'Free'
+                    : PriceFormatter.formatWithCurrency(
+                      cartModel.deliveryCharge,
+                    ),
           ),
           const Divider(height: 24),
           _SummaryRow(
@@ -118,13 +129,21 @@ class CartScreen extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.shopping_bag_outlined, size: 72, color: AppColors.textMuted),
+          const Icon(
+            Icons.shopping_bag_outlined,
+            size: 72,
+            color: AppColors.textMuted,
+          ),
           const SizedBox(height: 16),
-          Text('Your cart is empty',
-              style: Theme.of(context).textTheme.titleMedium),
+          Text(
+            'Your cart is empty',
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
           const SizedBox(height: 8),
-          Text('Add products from the home screen',
-              style: Theme.of(context).textTheme.bodyMedium),
+          Text(
+            'Add products from the home screen',
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
         ],
       ),
     );
@@ -162,10 +181,11 @@ class _CartTile extends StatelessWidget {
               child: Image.asset(
                 p.image,
                 fit: BoxFit.contain,
-                errorBuilder: (_, _, _) => const Icon(
-                  Icons.image_not_supported_outlined,
-                  color: AppColors.textMuted,
-                ),
+                errorBuilder:
+                    (_, _, _) => const Icon(
+                      Icons.image_not_supported_outlined,
+                      color: AppColors.textMuted,
+                    ),
               ),
             ),
           ),
@@ -174,10 +194,12 @@ class _CartTile extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(p.name,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: text.bodyLarge?.copyWith(fontSize: 13)),
+                Text(
+                  p.name,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: text.bodyLarge?.copyWith(fontSize: 13),
+                ),
                 const SizedBox(height: 4),
                 Text(
                   PriceFormatter.formatWithCurrency(p.price),
@@ -198,9 +220,13 @@ class _CartTile extends StatelessWidget {
                 onTap: () => context.read<CartModel>().increase(p.id),
               ),
               const SizedBox(height: 4),
-              Text('${item.quantity}',
-                  style: const TextStyle(
-                      fontWeight: FontWeight.w700, fontSize: 14)),
+              Text(
+                '${item.quantity}',
+                style: const TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 14,
+                ),
+              ),
               const SizedBox(height: 4),
               _QtyBtn(
                 icon: Icons.remove,
@@ -210,7 +236,11 @@ class _CartTile extends StatelessWidget {
           ),
           IconButton(
             onPressed: () => context.read<CartModel>().remove(p.id),
-            icon: const Icon(Icons.delete_outline, size: 20, color: AppColors.danger),
+            icon: const Icon(
+              Icons.delete_outline,
+              size: 20,
+              color: AppColors.danger,
+            ),
           ),
         ],
       ),
@@ -255,15 +285,17 @@ class _SummaryRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final style = Theme.of(context).textTheme.bodyLarge?.copyWith(
-          fontWeight: bold ? FontWeight.w700 : FontWeight.w400,
-          fontSize: bold ? 16 : 14,
-        );
+      fontWeight: bold ? FontWeight.w700 : FontWeight.w400,
+      fontSize: bold ? 16 : 14,
+    );
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(label, style: style),
-        Text(value,
-            style: style?.copyWith(color: bold ? AppColors.accent : null)),
+        Text(
+          value,
+          style: style?.copyWith(color: bold ? AppColors.accent : null),
+        ),
       ],
     );
   }

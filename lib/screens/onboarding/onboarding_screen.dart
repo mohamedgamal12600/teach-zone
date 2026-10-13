@@ -17,17 +17,20 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   final List<_OnboardPageData> _pages = const [
     _OnboardPageData(
       title: 'Next-Gen Electronics',
-      subtitle: 'Discover top-tier gaming consoles, laptops, smartphones, and accessories curated for tech lovers.',
+      subtitle:
+          'Discover top-tier gaming consoles, laptops, smartphones, and accessories curated for tech lovers.',
       icon: Icons.devices_other,
     ),
     _OnboardPageData(
       title: 'Compare Hardware Specs',
-      subtitle: 'Evaluate processors, memory, displays, and battery life side-by-side to make confident buying choices.',
+      subtitle:
+          'Evaluate processors, memory, displays, and battery life side-by-side to make confident buying choices.',
       icon: Icons.compare_arrows,
     ),
     _OnboardPageData(
       title: 'Fast & Secure Delivery',
-      subtitle: 'Enjoy quick doorstep shipping with live order tracking and free delivery on orders over EGP 2,000.',
+      subtitle:
+          'Enjoy quick doorstep shipping with live order tracking and free delivery on orders over EGP 2,000.',
       icon: Icons.local_shipping_outlined,
     ),
   ];
@@ -75,9 +78,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           height: 140,
                           decoration: BoxDecoration(
                             color: AppColors.surface,
-                            borderRadius: BorderRadius.circular(AppRadius.card + 8),
+                            borderRadius: BorderRadius.circular(
+                              AppRadius.card + 8,
+                            ),
                           ),
-                          child: Icon(item.icon, size: 70, color: AppColors.accent),
+                          child: Icon(
+                            item.icon,
+                            size: 70,
+                            color: AppColors.accent,
+                          ),
                         ),
                         const SizedBox(height: 36),
                         Text(
@@ -108,7 +117,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     width: _currentPage == index ? 24 : 8,
                     height: 8,
                     decoration: BoxDecoration(
-                      color: _currentPage == index ? AppColors.accent : AppColors.surface,
+                      color:
+                          _currentPage == index
+                              ? AppColors.accent
+                              : AppColors.surface,
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
@@ -128,7 +140,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       _finish();
                     }
                   },
-                  child: Text(_currentPage == _pages.length - 1 ? 'Get Started' : 'Next'),
+                  child: Text(
+                    _currentPage == _pages.length - 1 ? 'Get Started' : 'Next',
+                  ),
                 ),
               ),
             ],
@@ -150,4 +164,3 @@ class _OnboardPageData {
     required this.icon,
   });
 }
-

@@ -6,11 +6,7 @@ class Category {
   final String name;
   final String? iconName;
 
-  const Category({
-    required this.id,
-    required this.name,
-    this.iconName,
-  });
+  const Category({required this.id, required this.name, this.iconName});
 
   @override
   bool operator ==(Object other) =>

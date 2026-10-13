@@ -37,10 +37,12 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
-  List<Product> get _visible => products.where((p) {
+  List<Product> get _visible =>
+      products.where((p) {
         final inCategory =
             _category == 0 || p.category == _categories[_category];
-        final matches = p.name.toLowerCase().contains(_query.toLowerCase()) ||
+        final matches =
+            p.name.toLowerCase().contains(_query.toLowerCase()) ||
             p.brand.toLowerCase().contains(_query.toLowerCase());
         return inCategory && matches;
       }).toList();
@@ -70,7 +72,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   IconButton(
                     icon: const Icon(Icons.compare_arrows),
                     tooltip: 'Compare Products',
-                    onPressed: () => Navigator.pushNamed(context, '/compare_products'),
+                    onPressed:
+                        () => Navigator.pushNamed(context, '/compare_products'),
                   ),
                   IconButton(
                     icon: const Icon(Icons.favorite_border),
@@ -107,16 +110,17 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                   decoration: InputDecoration(
                     hintText: 'Search Products...',
-                    suffixIcon: _query.isNotEmpty
-                        ? IconButton(
-                            icon: const Icon(Icons.clear, size: 18),
-                            onPressed: () {
-                              _search.clear();
-                              setState(() => _query = '');
-                              _resetPage();
-                            },
-                          )
-                        : const Icon(Icons.search, size: 20),
+                    suffixIcon:
+                        _query.isNotEmpty
+                            ? IconButton(
+                              icon: const Icon(Icons.clear, size: 18),
+                              onPressed: () {
+                                _search.clear();
+                                setState(() => _query = '');
+                                _resetPage();
+                              },
+                            )
+                            : const Icon(Icons.search, size: 20),
                   ),
                 ),
               ),
@@ -138,44 +142,49 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         Expanded(
-          child: items.isEmpty
-              ? Center(
-                  child: Text('No products found', style: text.bodyMedium),
-                )
-              : PageView.builder(
-                  controller: _pageController,
-                  padEnds: false,
-                  itemCount: items.length,
-                  itemBuilder: (context, i) {
-                    final p = items[i];
-                    return Padding(
-                      padding: EdgeInsets.only(
-                        left: i == 0 ? 22 : 8,
-                        right: 8,
-                        bottom: 16,
-                      ),
-                      child: ProductCard(
-                        product: p,
-                        isFavorite: context.watch<FavoritesModel>().contains(p.id),
-                        onFavorite: () => context.read<FavoritesModel>().toggle(p.id),
-                        onTap: () => Navigator.pushNamed(
-                          context,
-                          '/product_details',
-                          arguments: p,
+          child:
+              items.isEmpty
+                  ? Center(
+                    child: Text('No products found', style: text.bodyMedium),
+                  )
+                  : PageView.builder(
+                    controller: _pageController,
+                    padEnds: false,
+                    itemCount: items.length,
+                    itemBuilder: (context, i) {
+                      final p = items[i];
+                      return Padding(
+                        padding: EdgeInsets.only(
+                          left: i == 0 ? 22 : 8,
+                          right: 8,
+                          bottom: 16,
                         ),
-                        onAddToCart: () {
-                          context.read<CartModel>().add(p);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('${p.name} added to cart'),
-                              duration: const Duration(seconds: 1),
-                            ),
-                          );
-                        },
-                      ),
-                    );
-                  },
-                ),
+                        child: ProductCard(
+                          product: p,
+                          isFavorite: context.watch<FavoritesModel>().contains(
+                            p.id,
+                          ),
+                          onFavorite:
+                              () => context.read<FavoritesModel>().toggle(p.id),
+                          onTap:
+                              () => Navigator.pushNamed(
+                                context,
+                                '/product_details',
+                                arguments: p,
+                              ),
+                          onAddToCart: () {
+                            context.read<CartModel>().add(p);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('${p.name} added to cart'),
+                                duration: const Duration(seconds: 1),
+                              ),
+                            );
+                          },
+                        ),
+                      );
+                    },
+                  ),
         ),
       ],
     );
@@ -200,4 +209,3 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-

@@ -8,7 +8,9 @@ class AppColors {
   // Surfaces
   static const background = Color(0xFF333742); // screen background
   static const surface = Color(0xFF454D5A); // cards, search field, chips
-  static const surfaceDark = Color(0xFF191B20); // selected nav pill, dark buttons
+  static const surfaceDark = Color(
+    0xFF191B20,
+  ); // selected nav pill, dark buttons
 
   // Accent
   static const accent = Color(0xFFFDD14B); // yellow highlight (CTA buttons)

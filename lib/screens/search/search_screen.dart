@@ -18,7 +18,8 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
   final _searchCtrl = TextEditingController();
   String _selectedCategory = 'ALL';
-  String _sortBy = 'relevance'; // 'relevance', 'price_asc', 'price_desc', 'rating'
+  String _sortBy =
+      'relevance'; // 'relevance', 'price_asc', 'price_desc', 'rating'
   double _minPrice = 0;
   double _maxPrice = 100000;
   bool _showFilters = false;
@@ -36,19 +37,21 @@ class _SearchScreenState extends State<SearchScreen> {
 
   List<Product> get _filteredProducts {
     final query = _searchCtrl.text.trim().toLowerCase();
-    var list = products.where((p) {
-      final matchesQuery = query.isEmpty ||
-          p.name.toLowerCase().contains(query) ||
-          p.brand.toLowerCase().contains(query) ||
-          p.category.toLowerCase().contains(query);
+    var list =
+        products.where((p) {
+          final matchesQuery =
+              query.isEmpty ||
+              p.name.toLowerCase().contains(query) ||
+              p.brand.toLowerCase().contains(query) ||
+              p.category.toLowerCase().contains(query);
 
-      final matchesCategory =
-          _selectedCategory == 'ALL' || p.category == _selectedCategory;
+          final matchesCategory =
+              _selectedCategory == 'ALL' || p.category == _selectedCategory;
 
-      final matchesPrice = p.price >= _minPrice && p.price <= _maxPrice;
+          final matchesPrice = p.price >= _minPrice && p.price <= _maxPrice;
 
-      return matchesQuery && matchesCategory && matchesPrice;
-    }).toList();
+          return matchesQuery && matchesCategory && matchesPrice;
+        }).toList();
 
     switch (_sortBy) {
       case 'price_asc':
@@ -97,15 +100,16 @@ class _SearchScreenState extends State<SearchScreen> {
               decoration: InputDecoration(
                 hintText: 'Search laptops, consoles, headphones...',
                 prefixIcon: const Icon(Icons.search, size: 20),
-                suffixIcon: _searchCtrl.text.isNotEmpty
-                    ? IconButton(
-                        icon: const Icon(Icons.clear, size: 18),
-                        onPressed: () {
-                          _searchCtrl.clear();
-                          setState(() {});
-                        },
-                      )
-                    : null,
+                suffixIcon:
+                    _searchCtrl.text.isNotEmpty
+                        ? IconButton(
+                          icon: const Icon(Icons.clear, size: 18),
+                          onPressed: () {
+                            _searchCtrl.clear();
+                            setState(() {});
+                          },
+                        )
+                        : null,
               ),
             ),
           ),
@@ -142,23 +146,30 @@ class _SearchScreenState extends State<SearchScreen> {
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
-                      children: _categories.map((c) {
-                        final isSel = _selectedCategory == c;
-                        return Padding(
-                          padding: const EdgeInsets.only(right: 8),
-                          child: ChoiceChip(
-                            label: Text(c),
-                            selected: isSel,
-                            selectedColor: AppColors.accent,
-                            labelStyle: TextStyle(
-                              color: isSel ? AppColors.surfaceDark : Colors.white,
-                              fontWeight: isSel ? FontWeight.w700 : FontWeight.w400,
-                              fontSize: 12,
-                            ),
-                            onSelected: (_) => setState(() => _selectedCategory = c),
-                          ),
-                        );
-                      }).toList(),
+                      children:
+                          _categories.map((c) {
+                            final isSel = _selectedCategory == c;
+                            return Padding(
+                              padding: const EdgeInsets.only(right: 8),
+                              child: ChoiceChip(
+                                label: Text(c),
+                                selected: isSel,
+                                selectedColor: AppColors.accent,
+                                labelStyle: TextStyle(
+                                  color:
+                                      isSel
+                                          ? AppColors.surfaceDark
+                                          : Colors.white,
+                                  fontWeight:
+                                      isSel ? FontWeight.w700 : FontWeight.w400,
+                                  fontSize: 12,
+                                ),
+                                onSelected:
+                                    (_) =>
+                                        setState(() => _selectedCategory = c),
+                              ),
+                            );
+                          }).toList(),
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -170,12 +181,27 @@ class _SearchScreenState extends State<SearchScreen> {
                         value: _sortBy,
                         dropdownColor: AppColors.surfaceDark,
                         underline: const SizedBox(),
-                        style: const TextStyle(color: Colors.white, fontSize: 13),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 13,
+                        ),
                         items: const [
-                          DropdownMenuItem(value: 'relevance', child: Text('Relevance')),
-                          DropdownMenuItem(value: 'price_asc', child: Text('Price: Low to High')),
-                          DropdownMenuItem(value: 'price_desc', child: Text('Price: High to Low')),
-                          DropdownMenuItem(value: 'rating', child: Text('Top Rated')),
+                          DropdownMenuItem(
+                            value: 'relevance',
+                            child: Text('Relevance'),
+                          ),
+                          DropdownMenuItem(
+                            value: 'price_asc',
+                            child: Text('Price: Low to High'),
+                          ),
+                          DropdownMenuItem(
+                            value: 'price_desc',
+                            child: Text('Price: High to Low'),
+                          ),
+                          DropdownMenuItem(
+                            value: 'rating',
+                            child: Text('Top Rated'),
+                          ),
                         ],
                         onChanged: (v) => setState(() => _sortBy = v!),
                       ),
@@ -220,56 +246,66 @@ class _SearchScreenState extends State<SearchScreen> {
 
           // Product results list
           Expanded(
-            child: results.isEmpty
-                ? Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(Icons.search_off, size: 64, color: AppColors.textMuted),
-                        const SizedBox(height: 12),
-                        Text('No products match your criteria', style: text.bodyMedium),
-                      ],
+            child:
+                results.isEmpty
+                    ? Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(
+                            Icons.search_off,
+                            size: 64,
+                            color: AppColors.textMuted,
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            'No products match your criteria',
+                            style: text.bodyMedium,
+                          ),
+                        ],
+                      ),
+                    )
+                    : GridView.builder(
+                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            mainAxisSpacing: 12,
+                            crossAxisSpacing: 12,
+                            childAspectRatio: 0.62,
+                          ),
+                      itemCount: results.length,
+                      itemBuilder: (context, i) {
+                        final p = results[i];
+                        final isFav = context.watch<FavoritesModel>().contains(
+                          p.id,
+                        );
+                        return ProductCard(
+                          product: p,
+                          isFavorite: isFav,
+                          onFavorite:
+                              () => context.read<FavoritesModel>().toggle(p.id),
+                          onTap:
+                              () => Navigator.pushNamed(
+                                context,
+                                '/product_details',
+                                arguments: p,
+                              ),
+                          onAddToCart: () {
+                            context.read<CartModel>().add(p);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('${p.name} added to cart'),
+                                duration: const Duration(seconds: 1),
+                              ),
+                            );
+                          },
+                        );
+                      },
                     ),
-                  )
-                : GridView.builder(
-                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      mainAxisSpacing: 12,
-                      crossAxisSpacing: 12,
-                      childAspectRatio: 0.62,
-                    ),
-                    itemCount: results.length,
-                    itemBuilder: (context, i) {
-                      final p = results[i];
-                      final isFav =
-                          context.watch<FavoritesModel>().contains(p.id);
-                      return ProductCard(
-                        product: p,
-                        isFavorite: isFav,
-                        onFavorite: () =>
-                            context.read<FavoritesModel>().toggle(p.id),
-                        onTap: () => Navigator.pushNamed(
-                          context,
-                          '/product_details',
-                          arguments: p,
-                        ),
-                        onAddToCart: () {
-                          context.read<CartModel>().add(p);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('${p.name} added to cart'),
-                              duration: const Duration(seconds: 1),
-                            ),
-                          );
-                        },
-                      );
-                    },
-                  ),
           ),
         ],
       ),
     );
   }
 }
-

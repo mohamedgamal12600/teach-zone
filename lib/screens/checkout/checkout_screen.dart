@@ -43,9 +43,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   Future<void> _placeOrder() async {
     if (!_formKey.currentState!.validate()) return;
     if (context.read<CartModel>().items.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Your cart is empty.')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Your cart is empty.')));
       return;
     }
     final uid = context.read<AuthModel>().currentUser?.uid;
@@ -73,30 +73,33 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       showDialog(
         context: context,
         barrierDismissible: false,
-        builder: (_) => AlertDialog(
-          backgroundColor: AppColors.surface,
-          title: const Text('Order Placed!',
-              style: TextStyle(color: AppColors.textPrimary)),
-          content: const Text(
-            'Your order has been placed successfully. You can track it in My Orders.',
-            style: TextStyle(color: AppColors.textSecondary),
-          ),
-          actions: [
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context); // close dialog
-                Navigator.pop(context); // leave checkout
-              },
-              child: const Text('Great!'),
+        builder:
+            (_) => AlertDialog(
+              backgroundColor: AppColors.surface,
+              title: const Text(
+                'Order Placed!',
+                style: TextStyle(color: AppColors.textPrimary),
+              ),
+              content: const Text(
+                'Your order has been placed successfully. You can track it in My Orders.',
+                style: TextStyle(color: AppColors.textSecondary),
+              ),
+              actions: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context); // close dialog
+                    Navigator.pop(context); // leave checkout
+                  },
+                  child: const Text('Great!'),
+                ),
+              ],
             ),
-          ],
-        ),
       );
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to place order: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Failed to place order: $e')));
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -122,8 +125,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 hintText: 'Full name',
                 prefixIcon: Icon(Icons.person_outline, size: 20),
               ),
-              validator: (v) =>
-                  (v == null || v.trim().isEmpty) ? 'Name is required.' : null,
+              validator:
+                  (v) =>
+                      (v == null || v.trim().isEmpty)
+                          ? 'Name is required.'
+                          : null,
             ),
             const SizedBox(height: 14),
             TextFormField(
@@ -147,8 +153,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 hintText: 'Shipping address',
                 prefixIcon: Icon(Icons.location_on_outlined, size: 20),
               ),
-              validator: (v) =>
-                  (v == null || v.trim().isEmpty) ? 'Address is required.' : null,
+              validator:
+                  (v) =>
+                      (v == null || v.trim().isEmpty)
+                          ? 'Address is required.'
+                          : null,
             ),
             const SizedBox(height: 24),
             Text('Payment Method', style: text.titleMedium),
@@ -164,7 +173,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                         isSelected
                             ? Icons.radio_button_checked
                             : Icons.radio_button_unchecked,
-                        color: isSelected ? AppColors.accent : AppColors.textSecondary,
+                        color:
+                            isSelected
+                                ? AppColors.accent
+                                : AppColors.textSecondary,
                         size: 20,
                       ),
                       const SizedBox(width: 12),
@@ -179,69 +191,83 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             const SizedBox(height: 12),
             ListenableBuilder(
               listenable: cartModel,
-              builder: (_, _) => Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: AppColors.surface,
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Column(
-                  children: [
-                    ...cartModel.items.map(
-                      (ci) => Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 4),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                '${ci.product.name} x ${ci.quantity}',
-                                style: text.bodyLarge?.copyWith(fontSize: 13),
-                              ),
+              builder:
+                  (_, _) => Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: AppColors.surface,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Column(
+                      children: [
+                        ...cartModel.items.map(
+                          (ci) => Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 4),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    '${ci.product.name} x ${ci.quantity}',
+                                    style: text.bodyLarge?.copyWith(
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                ),
+                                Text(
+                                  PriceFormatter.formatWithCurrency(
+                                    ci.product.price * ci.quantity,
+                                  ),
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              ],
                             ),
-                            Text(
-                              PriceFormatter.formatWithCurrency(ci.product.price * ci.quantity),
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.w600, fontSize: 13),
-                            ),
-                          ],
+                          ),
                         ),
-                      ),
+                        const Divider(height: 20),
+                        _Row(
+                          'Subtotal',
+                          PriceFormatter.formatWithCurrency(cartModel.subtotal),
+                          text,
+                        ),
+                        _Row(
+                          'Delivery',
+                          cartModel.deliveryCharge == 0
+                              ? 'Free'
+                              : PriceFormatter.formatWithCurrency(
+                                cartModel.deliveryCharge,
+                              ),
+                          text,
+                        ),
+                        const Divider(height: 16),
+                        _Row(
+                          'Total',
+                          PriceFormatter.formatWithCurrency(cartModel.total),
+                          text,
+                          bold: true,
+                        ),
+                      ],
                     ),
-                    const Divider(height: 20),
-                    _Row('Subtotal', PriceFormatter.formatWithCurrency(cartModel.subtotal), text),
-                    _Row(
-                      'Delivery',
-                      cartModel.deliveryCharge == 0
-                          ? 'Free'
-                          : PriceFormatter.formatWithCurrency(cartModel.deliveryCharge),
-                      text,
-                    ),
-                    const Divider(height: 16),
-                    _Row(
-                      'Total',
-                      PriceFormatter.formatWithCurrency(cartModel.total),
-                      text,
-                      bold: true,
-                    ),
-                  ],
-                ),
-              ),
+                  ),
             ),
             const SizedBox(height: 28),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: _loading ? null : _placeOrder,
-                child: _loading
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: AppColors.surfaceDark,
-                        ),
-                      )
-                    : const Text('Place Order'),
+                child:
+                    _loading
+                        ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: AppColors.surfaceDark,
+                          ),
+                        )
+                        : const Text('Place Order'),
               ),
             ),
             const SizedBox(height: 16),
@@ -270,10 +296,7 @@ class _Row extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 2),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(label, style: style),
-          Text(value, style: style),
-        ],
+        children: [Text(label, style: style), Text(value, style: style)],
       ),
     );
   }

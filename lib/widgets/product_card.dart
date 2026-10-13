@@ -58,7 +58,8 @@ class ProductCard extends StatelessWidget {
                                 width: 14,
                                 height: 14,
                                 fit: BoxFit.contain,
-                                errorBuilder: (_, _, _) => const SizedBox.shrink(),
+                                errorBuilder:
+                                    (_, _, _) => const SizedBox.shrink(),
                               ),
                             ),
                             const SizedBox(width: 4),
@@ -87,7 +88,10 @@ class ProductCard extends StatelessWidget {
                 ),
                 IconButton(
                   padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                  constraints: const BoxConstraints(
+                    minWidth: 32,
+                    minHeight: 32,
+                  ),
                   onPressed: onFavorite,
                   icon: Icon(
                     isFavorite ? Icons.favorite : Icons.favorite_border,
@@ -106,11 +110,12 @@ class ProductCard extends StatelessWidget {
                   child: Image.asset(
                     product.image,
                     fit: BoxFit.contain,
-                    errorBuilder: (_, _, _) => const Icon(
-                      Icons.image_not_supported_outlined,
-                      size: 50,
-                      color: AppColors.textMuted,
-                    ),
+                    errorBuilder:
+                        (_, _, _) => const Icon(
+                          Icons.image_not_supported_outlined,
+                          size: 50,
+                          color: AppColors.textMuted,
+                        ),
                   ),
                 ),
               ),
@@ -135,7 +140,10 @@ class ProductCard extends StatelessWidget {
             Row(
               children: [
                 Expanded(
-                  child: _PricePill(price: product.price, oldPrice: product.oldPrice),
+                  child: _PricePill(
+                    price: product.price,
+                    oldPrice: product.oldPrice,
+                  ),
                 ),
                 if (onAddToCart != null) ...[
                   const SizedBox(width: 6),

@@ -15,6 +15,7 @@ class Product {
   final int sold;
   final double rating;
   final String description;
+
   /// Key-value spec pairs, e.g. {'Processor': 'M4 Pro', 'RAM': '24 GB'}
   final Map<String, String> specs;
 

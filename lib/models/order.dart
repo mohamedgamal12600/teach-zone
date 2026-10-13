@@ -58,11 +58,11 @@ class OrderLineItem {
 
   /// Serialises to a map.
   Map<String, dynamic> toMap() => {
-        'productId': productId,
-        'productName': productName,
-        'unitPrice': unitPrice,
-        'quantity': quantity,
-      };
+    'productId': productId,
+    'productName': productName,
+    'unitPrice': unitPrice,
+    'quantity': quantity,
+  };
 }
 
 /// Represents a customer order in TechZone.
@@ -98,9 +98,10 @@ class AppOrder {
     return AppOrder(
       id: id,
       userId: data['userId'] as String? ?? '',
-      items: (data['items'] as List<dynamic>? ?? [])
-          .map((e) => OrderLineItem.fromMap(e as Map<String, dynamic>))
-          .toList(),
+      items:
+          (data['items'] as List<dynamic>? ?? [])
+              .map((e) => OrderLineItem.fromMap(e as Map<String, dynamic>))
+              .toList(),
       subtotal: (data['subtotal'] as num?)?.toDouble() ?? 0.0,
       deliveryFee: (data['deliveryFee'] as num?)?.toDouble() ?? 0.0,
       total: (data['total'] as num?)?.toDouble() ?? 0.0,
@@ -108,11 +109,13 @@ class AppOrder {
       phone: data['phone'] as String? ?? '',
       paymentMethod: data['paymentMethod'] as String? ?? '',
       status: data['status'] as String? ?? 'active',
-      createdAt: data['createdAt'] is Timestamp
-          ? (data['createdAt'] as Timestamp).toDate()
-          : (data['createdAt'] is String
-              ? DateTime.tryParse(data['createdAt'] as String) ?? DateTime.now()
-              : DateTime.now()),
+      createdAt:
+          data['createdAt'] is Timestamp
+              ? (data['createdAt'] as Timestamp).toDate()
+              : (data['createdAt'] is String
+                  ? DateTime.tryParse(data['createdAt'] as String) ??
+                      DateTime.now()
+                  : DateTime.now()),
     );
   }
 

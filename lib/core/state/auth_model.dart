@@ -23,10 +23,7 @@ class AuthModel extends ChangeNotifier {
   // Auth operations
 
   /// Signs in with [email] and [password] with a timeout so UI never hangs indefinitely.
-  Future<void> signInWithEmailAndPassword(
-    String email,
-    String password,
-  ) async {
+  Future<void> signInWithEmailAndPassword(String email, String password) async {
     await _authService.signInWithEmailAndPassword(email, password);
     notifyListeners();
   }
@@ -39,7 +36,11 @@ class AuthModel extends ChangeNotifier {
     String password,
     String fullName,
   ) async {
-    await _authService.createUserWithEmailAndPassword(email, password, fullName);
+    await _authService.createUserWithEmailAndPassword(
+      email,
+      password,
+      fullName,
+    );
     notifyListeners();
   }
 

@@ -33,7 +33,9 @@ class _CompareProductsScreenState extends State<CompareProductsScreen> {
       backgroundColor: AppColors.background,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.card)),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(AppRadius.card),
+        ),
       ),
       builder: (ctx) {
         return DraggableScrollableSheet(
@@ -66,13 +68,17 @@ class _CompareProductsScreenState extends State<CompareProductsScreen> {
                           child: Image.asset(
                             p.image,
                             fit: BoxFit.contain,
-                            errorBuilder: (_, _, _) => const Icon(
-                              Icons.devices,
-                              color: AppColors.textSecondary,
-                            ),
+                            errorBuilder:
+                                (_, _, _) => const Icon(
+                                  Icons.devices,
+                                  color: AppColors.textSecondary,
+                                ),
                           ),
                         ),
-                        title: Text(p.name, style: const TextStyle(fontSize: 14)),
+                        title: Text(
+                          p.name,
+                          style: const TextStyle(fontSize: 14),
+                        ),
                         subtitle: Text(
                           '${p.category} • ${PriceFormatter.formatWithCurrency(p.price)}',
                           style: const TextStyle(
@@ -115,81 +121,94 @@ class _CompareProductsScreenState extends State<CompareProductsScreen> {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Compare Products')),
-      body: (pA == null || pB == null)
-          ? const Center(child: Text('Not enough products to compare'))
-          : SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                children: [
-                  // Product Headers
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: _ProductHeader(
-                          product: pA,
-                          onTapChange: () => _selectProduct(true),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: _ProductHeader(
-                          product: pB,
-                          onTapChange: () => _selectProduct(false),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 24),
-
-                  // Specs Table
-                  Container(
-                    decoration: BoxDecoration(
-                      color: AppColors.surface,
-                      borderRadius: BorderRadius.circular(AppRadius.card),
-                    ),
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
+      body:
+          (pA == null || pB == null)
+              ? const Center(child: Text('Not enough products to compare'))
+              : SingleChildScrollView(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  children: [
+                    // Product Headers
+                    Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Comparison Overview', style: text.titleMedium),
-                        const SizedBox(height: 12),
-                        _compareRow('Brand', pA.brand, pB.brand),
-                        _compareRow('Category', pA.category, pB.category),
-                        _compareRow(
-                          'Price',
-                          PriceFormatter.formatWithCurrency(pA.price),
-                          PriceFormatter.formatWithCurrency(pB.price),
-                          highlightDiff: true,
+                        Expanded(
+                          child: _ProductHeader(
+                            product: pA,
+                            onTapChange: () => _selectProduct(true),
+                          ),
                         ),
-                        _compareRow(
-                          'Rating',
-                          '★ ${pA.rating}',
-                          '★ ${pB.rating}',
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: _ProductHeader(
+                            product: pB,
+                            onTapChange: () => _selectProduct(false),
+                          ),
                         ),
-                        _compareRow('Popularity (Likes)', '${pA.likes}', '${pB.likes}'),
-                        const Divider(height: 24),
-                        Text('Detailed Specs', style: text.titleMedium),
-                        const SizedBox(height: 12),
-                        if (allSpecKeys.isEmpty)
-                          Text('No specific hardware specs listed', style: text.bodyMedium)
-                        else
-                          for (final key in allSpecKeys)
-                            _compareRow(
-                              key,
-                              pA.specs[key] ?? '—',
-                              pB.specs[key] ?? '—',
-                            ),
                       ],
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 24),
+
+                    // Specs Table
+                    Container(
+                      decoration: BoxDecoration(
+                        color: AppColors.surface,
+                        borderRadius: BorderRadius.circular(AppRadius.card),
+                      ),
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Comparison Overview', style: text.titleMedium),
+                          const SizedBox(height: 12),
+                          _compareRow('Brand', pA.brand, pB.brand),
+                          _compareRow('Category', pA.category, pB.category),
+                          _compareRow(
+                            'Price',
+                            PriceFormatter.formatWithCurrency(pA.price),
+                            PriceFormatter.formatWithCurrency(pB.price),
+                            highlightDiff: true,
+                          ),
+                          _compareRow(
+                            'Rating',
+                            '★ ${pA.rating}',
+                            '★ ${pB.rating}',
+                          ),
+                          _compareRow(
+                            'Popularity (Likes)',
+                            '${pA.likes}',
+                            '${pB.likes}',
+                          ),
+                          const Divider(height: 24),
+                          Text('Detailed Specs', style: text.titleMedium),
+                          const SizedBox(height: 12),
+                          if (allSpecKeys.isEmpty)
+                            Text(
+                              'No specific hardware specs listed',
+                              style: text.bodyMedium,
+                            )
+                          else
+                            for (final key in allSpecKeys)
+                              _compareRow(
+                                key,
+                                pA.specs[key] ?? '—',
+                                pB.specs[key] ?? '—',
+                              ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
     );
   }
 
-  Widget _compareRow(String label, String valA, String valB, {bool highlightDiff = false}) {
+  Widget _compareRow(
+    String label,
+    String valA,
+    String valB, {
+    bool highlightDiff = false,
+  }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Column(
@@ -211,7 +230,8 @@ class _CompareProductsScreenState extends State<CompareProductsScreen> {
                   valA,
                   style: TextStyle(
                     fontSize: 13,
-                    fontWeight: highlightDiff ? FontWeight.w700 : FontWeight.w400,
+                    fontWeight:
+                        highlightDiff ? FontWeight.w700 : FontWeight.w400,
                     color: highlightDiff ? AppColors.accent : Colors.white,
                   ),
                 ),
@@ -222,7 +242,8 @@ class _CompareProductsScreenState extends State<CompareProductsScreen> {
                   valB,
                   style: TextStyle(
                     fontSize: 13,
-                    fontWeight: highlightDiff ? FontWeight.w700 : FontWeight.w400,
+                    fontWeight:
+                        highlightDiff ? FontWeight.w700 : FontWeight.w400,
                     color: highlightDiff ? AppColors.accent : Colors.white,
                   ),
                 ),
@@ -237,10 +258,7 @@ class _CompareProductsScreenState extends State<CompareProductsScreen> {
 }
 
 class _ProductHeader extends StatelessWidget {
-  const _ProductHeader({
-    required this.product,
-    required this.onTapChange,
-  });
+  const _ProductHeader({required this.product, required this.onTapChange});
 
   final Product product;
   final VoidCallback onTapChange;
@@ -260,11 +278,12 @@ class _ProductHeader extends StatelessWidget {
             child: Image.asset(
               product.image,
               fit: BoxFit.contain,
-              errorBuilder: (_, _, _) => const Icon(
-                Icons.devices,
-                size: 48,
-                color: AppColors.textSecondary,
-              ),
+              errorBuilder:
+                  (_, _, _) => const Icon(
+                    Icons.devices,
+                    size: 48,
+                    color: AppColors.textSecondary,
+                  ),
             ),
           ),
           const SizedBox(height: 8),
@@ -283,7 +302,10 @@ class _ProductHeader extends StatelessWidget {
               minimumSize: const Size(80, 30),
               side: const BorderSide(color: AppColors.accent),
             ),
-            child: const Text('Change', style: TextStyle(fontSize: 11, color: AppColors.accent)),
+            child: const Text(
+              'Change',
+              style: TextStyle(fontSize: 11, color: AppColors.accent),
+            ),
           ),
           const SizedBox(height: 6),
           ElevatedButton(
@@ -307,4 +329,3 @@ class _ProductHeader extends StatelessWidget {
     );
   }
 }
-

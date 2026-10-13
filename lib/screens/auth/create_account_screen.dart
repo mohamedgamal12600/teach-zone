@@ -59,7 +59,10 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
       setState(() => _error = _mapError(e.code, e.message));
     } on TimeoutException catch (e) {
       if (!mounted) return;
-      setState(() => _error = e.message ?? 'Operation timed out. Check your connection.');
+      setState(
+        () =>
+            _error = e.message ?? 'Operation timed out. Check your connection.',
+      );
     } catch (e) {
       if (!mounted) return;
       setState(() => _error = 'Failed to create account: $e');
@@ -69,15 +72,15 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   }
 
   String _mapError(String code, String? message) => switch (code) {
-        'email-already-in-use' => 'An account already exists for that email.',
-        'invalid-email' => 'Invalid email address format.',
-        'weak-password' => 'Password is too weak (minimum 6 characters).',
-        'operation-not-allowed' =>
-          'Email/Password sign-in is not enabled in Firebase Console. Please enable it under Authentication -> Sign-in method.',
-        'network-request-failed' =>
-          'Network error. Please check your internet connection.',
-        _ => message ?? 'Authentication error: $code',
-      };
+    'email-already-in-use' => 'An account already exists for that email.',
+    'invalid-email' => 'Invalid email address format.',
+    'weak-password' => 'Password is too weak (minimum 6 characters).',
+    'operation-not-allowed' =>
+      'Email/Password sign-in is not enabled in Firebase Console. Please enable it under Authentication -> Sign-in method.',
+    'network-request-failed' =>
+      'Network error. Please check your internet connection.',
+    _ => message ?? 'Authentication error: $code',
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -104,7 +107,8 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                     prefixIcon: Icon(Icons.person_outline, size: 20),
                   ),
                   validator: (v) {
-                    if (v == null || v.trim().isEmpty) return 'Full name is required.';
+                    if (v == null || v.trim().isEmpty)
+                      return 'Full name is required.';
                     if (v.trim().length < 2) return 'Name is too short.';
                     return null;
                   },
@@ -119,7 +123,8 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                     prefixIcon: Icon(Icons.email_outlined, size: 20),
                   ),
                   validator: (v) {
-                    if (v == null || v.trim().isEmpty) return 'Email is required.';
+                    if (v == null || v.trim().isEmpty)
+                      return 'Email is required.';
                     if (!v.contains('@')) return 'Enter a valid email.';
                     return null;
                   },
@@ -139,7 +144,8 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                             : Icons.visibility_off_outlined,
                         size: 20,
                       ),
-                      onPressed: () => setState(() => _obscurePass = !_obscurePass),
+                      onPressed:
+                          () => setState(() => _obscurePass = !_obscurePass),
                     ),
                   ),
                   validator: (v) {
@@ -163,11 +169,15 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                             : Icons.visibility_off_outlined,
                         size: 20,
                       ),
-                      onPressed: () => setState(() => _obscureConfirm = !_obscureConfirm),
+                      onPressed:
+                          () => setState(
+                            () => _obscureConfirm = !_obscureConfirm,
+                          ),
                     ),
                   ),
                   validator: (v) {
-                    if (v == null || v.isEmpty) return 'Please confirm your password.';
+                    if (v == null || v.isEmpty)
+                      return 'Please confirm your password.';
                     if (v != _passCtrl.text) return 'Passwords do not match.';
                     return null;
                   },
@@ -184,12 +194,19 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Icon(Icons.error_outline, size: 18, color: AppColors.danger),
+                        const Icon(
+                          Icons.error_outline,
+                          size: 18,
+                          color: AppColors.danger,
+                        ),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             _error!,
-                            style: const TextStyle(color: Colors.white, fontSize: 13),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 13,
+                            ),
                           ),
                         ),
                       ],
@@ -201,16 +218,17 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: _loading ? null : _submit,
-                    child: _loading
-                        ? const SizedBox(
-                            width: 22,
-                            height: 22,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2.5,
-                              color: AppColors.surfaceDark,
-                            ),
-                          )
-                        : const Text('Create Account'),
+                    child:
+                        _loading
+                            ? const SizedBox(
+                              width: 22,
+                              height: 22,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2.5,
+                                color: AppColors.surfaceDark,
+                              ),
+                            )
+                            : const Text('Create Account'),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -219,9 +237,13 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                   children: [
                     Text('Already have an account?', style: text.bodyMedium),
                     TextButton(
-                      onPressed: _loading
-                          ? null
-                          : () => Navigator.pushReplacementNamed(context, '/login'),
+                      onPressed:
+                          _loading
+                              ? null
+                              : () => Navigator.pushReplacementNamed(
+                                context,
+                                '/login',
+                              ),
                       child: const Text('Sign In'),
                     ),
                   ],
@@ -234,4 +256,3 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     );
   }
 }
-

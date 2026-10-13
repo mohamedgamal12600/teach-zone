@@ -46,9 +46,8 @@ class AppBottomBar extends StatelessWidget {
                     vertical: 10,
                   ),
                   decoration: BoxDecoration(
-                    color: i == index
-                        ? AppColors.surfaceDark
-                        : Colors.transparent,
+                    color:
+                        i == index ? AppColors.surfaceDark : Colors.transparent,
                     borderRadius: BorderRadius.circular(AppRadius.pill),
                   ),
                   child: Row(
@@ -60,9 +59,10 @@ class AppBottomBar extends StatelessWidget {
                           Icon(
                             _icons[i],
                             size: 22,
-                            color: i == index
-                                ? Colors.white
-                                : AppColors.textSecondary,
+                            color:
+                                i == index
+                                    ? Colors.white
+                                    : AppColors.textSecondary,
                           ),
                           // Cart badge
                           if (i == 1 && cartCount > 0)

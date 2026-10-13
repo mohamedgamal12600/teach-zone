@@ -61,7 +61,11 @@ class _OrdersScreenState extends State<OrdersScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.receipt_long_outlined, size: 72, color: AppColors.textMuted),
+            const Icon(
+              Icons.receipt_long_outlined,
+              size: 72,
+              color: AppColors.textMuted,
+            ),
             const SizedBox(height: 16),
             Text('No orders yet', style: text.titleMedium),
             const SizedBox(height: 8),
@@ -74,16 +78,12 @@ class _OrdersScreenState extends State<OrdersScreen> {
         padding: const EdgeInsets.all(16),
         itemCount: context.watch<OrdersModel>().orders.length,
         separatorBuilder: (_, _) => const SizedBox(height: 12),
-        itemBuilder: (_, i) => _OrderCard(
-          order: context.watch<OrdersModel>().orders[i],
-        ),
+        itemBuilder:
+            (_, i) => _OrderCard(order: context.watch<OrdersModel>().orders[i]),
       );
     }
 
-    return Scaffold(
-      appBar: AppBar(title: const Text('My Orders')),
-      body: body,
-    );
+    return Scaffold(appBar: AppBar(title: const Text('My Orders')), body: body);
   }
 }
 
@@ -93,11 +93,11 @@ class _OrderCard extends StatelessWidget {
   final AppOrder order;
 
   Color _chipColor(String status) => switch (status) {
-        'active' => AppColors.accent,
-        'completed' => Colors.green,
-        'cancelled' => AppColors.danger,
-        _ => AppColors.textSecondary,
-      };
+    'active' => AppColors.accent,
+    'completed' => Colors.green,
+    'cancelled' => AppColors.danger,
+    _ => AppColors.textSecondary,
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -115,10 +115,15 @@ class _OrderCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('#${order.id.substring(0, 8).toUpperCase()}',
-                  style: text.bodyLarge?.copyWith(fontWeight: FontWeight.w700)),
+              Text(
+                '#${order.id.substring(0, 8).toUpperCase()}',
+                style: text.bodyLarge?.copyWith(fontWeight: FontWeight.w700),
+              ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   color: _chipColor(order.status).withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(8),
@@ -144,12 +149,19 @@ class _OrderCard extends StatelessWidget {
               child: Row(
                 children: [
                   Expanded(
-                    child: Text('${li.productName} x ${li.quantity}',
-                        style: text.bodyMedium),
+                    child: Text(
+                      '${li.productName} x ${li.quantity}',
+                      style: text.bodyMedium,
+                    ),
                   ),
                   Text(
-                    PriceFormatter.formatWithCurrency(li.unitPrice * li.quantity),
-                    style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                    PriceFormatter.formatWithCurrency(
+                      li.unitPrice * li.quantity,
+                    ),
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: AppColors.textSecondary,
+                    ),
                   ),
                 ],
               ),
@@ -159,7 +171,10 @@ class _OrderCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('Total', style: TextStyle(fontWeight: FontWeight.w600)),
+              const Text(
+                'Total',
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
               Text(
                 PriceFormatter.formatWithCurrency(order.total),
                 style: const TextStyle(

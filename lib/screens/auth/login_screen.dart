@@ -83,17 +83,17 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   String _mapError(String code, String? message) => switch (code) {
-        'user-not-found' => 'No account found for that email.',
-        'wrong-password' => 'Incorrect password.',
-        'invalid-email' => 'Invalid email address.',
-        'too-many-requests' => 'Too many attempts. Try again later.',
-        'invalid-credential' => 'Invalid email or password.',
-        'operation-not-allowed' =>
-          'Email/Password sign-in is not enabled in Firebase Console.',
-        'network-request-failed' =>
-          'Network error. Please check your internet connection.',
-        _ => message ?? 'Error: $code',
-      };
+    'user-not-found' => 'No account found for that email.',
+    'wrong-password' => 'Incorrect password.',
+    'invalid-email' => 'Invalid email address.',
+    'too-many-requests' => 'Too many attempts. Try again later.',
+    'invalid-credential' => 'Invalid email or password.',
+    'operation-not-allowed' =>
+      'Email/Password sign-in is not enabled in Firebase Console.',
+    'network-request-failed' =>
+      'Network error. Please check your internet connection.',
+    _ => message ?? 'Error: $code',
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -109,7 +109,10 @@ class _LoginScreenState extends State<LoginScreen> {
               children: [
                 Text('Welcome back', style: text.headlineMedium),
                 const SizedBox(height: 6),
-                Text('Sign in to your TechZone account', style: text.bodyMedium),
+                Text(
+                  'Sign in to your TechZone account',
+                  style: text.bodyMedium,
+                ),
                 const SizedBox(height: 40),
                 TextFormField(
                   controller: _emailCtrl,
@@ -120,7 +123,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     prefixIcon: Icon(Icons.email_outlined, size: 20),
                   ),
                   validator: (v) {
-                    if (v == null || v.trim().isEmpty) return 'Email is required.';
+                    if (v == null || v.trim().isEmpty)
+                      return 'Email is required.';
                     if (!v.contains('@')) return 'Enter a valid email.';
                     return null;
                   },
@@ -135,7 +139,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     prefixIcon: const Icon(Icons.lock_outline, size: 20),
                     suffixIcon: IconButton(
                       icon: Icon(
-                        _obscure ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+                        _obscure
+                            ? Icons.visibility_outlined
+                            : Icons.visibility_off_outlined,
                         size: 20,
                       ),
                       onPressed: () => setState(() => _obscure = !_obscure),
@@ -166,12 +172,19 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Icon(Icons.error_outline, size: 18, color: AppColors.danger),
+                        const Icon(
+                          Icons.error_outline,
+                          size: 18,
+                          color: AppColors.danger,
+                        ),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             _error!,
-                            style: const TextStyle(color: Colors.white, fontSize: 13),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 13,
+                            ),
                           ),
                         ),
                       ],
@@ -183,16 +196,17 @@ class _LoginScreenState extends State<LoginScreen> {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: _loading ? null : _submit,
-                    child: _loading
-                        ? const SizedBox(
-                            width: 22,
-                            height: 22,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2.5,
-                              color: AppColors.surfaceDark,
-                            ),
-                          )
-                        : const Text('Sign In'),
+                    child:
+                        _loading
+                            ? const SizedBox(
+                              width: 22,
+                              height: 22,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2.5,
+                                color: AppColors.surfaceDark,
+                              ),
+                            )
+                            : const Text('Sign In'),
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -201,9 +215,13 @@ class _LoginScreenState extends State<LoginScreen> {
                   children: [
                     Text("Don't have an account?", style: text.bodyMedium),
                     TextButton(
-                      onPressed: _loading
-                          ? null
-                          : () => Navigator.pushReplacementNamed(context, '/create_account'),
+                      onPressed:
+                          _loading
+                              ? null
+                              : () => Navigator.pushReplacementNamed(
+                                context,
+                                '/create_account',
+                              ),
                       child: const Text('Sign Up'),
                     ),
                   ],
@@ -216,4 +234,3 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 }
-

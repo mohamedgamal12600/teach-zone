@@ -14,50 +14,53 @@ class ProductsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final list = category == 'ALL'
-        ? catalog.products
-        : catalog.products.where((p) => p.category == category).toList();
+    final list =
+        category == 'ALL'
+            ? catalog.products
+            : catalog.products.where((p) => p.category == category).toList();
 
     return Scaffold(
       appBar: AppBar(
         title: Text(category == 'ALL' ? 'All Products' : category),
       ),
-      body: list.isEmpty
-          ? const Center(child: Text('No products found in this category'))
-          : GridView.builder(
-              padding: const EdgeInsets.all(16),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                mainAxisSpacing: 12,
-                crossAxisSpacing: 12,
-                childAspectRatio: 0.62,
+      body:
+          list.isEmpty
+              ? const Center(child: Text('No products found in this category'))
+              : GridView.builder(
+                padding: const EdgeInsets.all(16),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 12,
+                  crossAxisSpacing: 12,
+                  childAspectRatio: 0.62,
+                ),
+                itemCount: list.length,
+                itemBuilder: (context, i) {
+                  final p = list[i];
+                  final isFav = context.watch<FavoritesModel>().contains(p.id);
+                  return ProductCard(
+                    product: p,
+                    isFavorite: isFav,
+                    onFavorite:
+                        () => context.read<FavoritesModel>().toggle(p.id),
+                    onTap:
+                        () => Navigator.pushNamed(
+                          context,
+                          '/product_details',
+                          arguments: p,
+                        ),
+                    onAddToCart: () {
+                      context.read<CartModel>().add(p);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('${p.name} added to cart'),
+                          duration: const Duration(seconds: 1),
+                        ),
+                      );
+                    },
+                  );
+                },
               ),
-              itemCount: list.length,
-              itemBuilder: (context, i) {
-                final p = list[i];
-                final isFav = context.watch<FavoritesModel>().contains(p.id);
-                return ProductCard(
-                  product: p,
-                  isFavorite: isFav,
-                  onFavorite: () => context.read<FavoritesModel>().toggle(p.id),
-                  onTap: () => Navigator.pushNamed(
-                    context,
-                    '/product_details',
-                    arguments: p,
-                  ),
-                  onAddToCart: () {
-                    context.read<CartModel>().add(p);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('${p.name} added to cart'),
-                        duration: const Duration(seconds: 1),
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
     );
   }
 }
-

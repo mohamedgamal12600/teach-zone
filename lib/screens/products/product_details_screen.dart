@@ -47,16 +47,17 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     ),
                   ),
                   IconButton(
-                    onPressed: () =>
-                        context.read<FavoritesModel>().toggle(p.id),
+                    onPressed:
+                        () => context.read<FavoritesModel>().toggle(p.id),
                     icon: Icon(
                       context.watch<FavoritesModel>().contains(p.id)
                           ? Icons.favorite
                           : Icons.favorite_border,
                       size: 20,
-                      color: context.watch<FavoritesModel>().contains(p.id)
-                          ? AppColors.danger
-                          : Colors.white,
+                      color:
+                          context.watch<FavoritesModel>().contains(p.id)
+                              ? AppColors.danger
+                              : Colors.white,
                     ),
                   ),
                 ],
@@ -81,7 +82,8 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                   width: 18,
                                   height: 18,
                                   fit: BoxFit.contain,
-                                  errorBuilder: (_, _, _) => const SizedBox.shrink(),
+                                  errorBuilder:
+                                      (_, _, _) => const SizedBox.shrink(),
                                 ),
                               ),
                               const SizedBox(width: 6),
@@ -100,17 +102,18 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                             const SizedBox(width: 18),
                             _Stat(icon: Icons.favorite, value: '${p.likes}'),
                             const SizedBox(width: 18),
-                            _Stat(
-                              icon: Icons.shopping_bag,
-                              value: '${p.sold}',
-                            ),
+                            _Stat(icon: Icons.shopping_bag, value: '${p.sold}'),
                           ],
                         ),
                         if (p.rating > 0) ...[
                           const SizedBox(height: 10),
                           Row(
                             children: [
-                              const Icon(Icons.star, size: 16, color: AppColors.accent),
+                              const Icon(
+                                Icons.star,
+                                size: 16,
+                                color: AppColors.accent,
+                              ),
                               const SizedBox(width: 4),
                               Text(
                                 p.rating.toStringAsFixed(1),
@@ -153,11 +156,12 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   child: Image.asset(
                     p.image,
                     fit: BoxFit.contain,
-                    errorBuilder: (_, _, _) => const Icon(
-                      Icons.image_not_supported_outlined,
-                      size: 80,
-                      color: AppColors.textMuted,
-                    ),
+                    errorBuilder:
+                        (_, _, _) => const Icon(
+                          Icons.image_not_supported_outlined,
+                          size: 80,
+                          color: AppColors.textMuted,
+                        ),
                   ),
                 ),
               ),
@@ -165,8 +169,12 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
             if (p.description.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.fromLTRB(28, 0, 28, 8),
-                child: Text(p.description, style: text.bodyMedium, maxLines: 3,
-                    overflow: TextOverflow.ellipsis),
+                child: Text(
+                  p.description,
+                  style: text.bodyMedium,
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
             if (p.specs.isNotEmpty)
               Padding(
@@ -174,16 +182,21 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 child: Wrap(
                   spacing: 8,
                   runSpacing: 4,
-                  children: p.specs.entries
-                      .take(4)
-                      .map((e) => Chip(
-                            label: Text('${e.key}: ${e.value}',
-                                style: const TextStyle(fontSize: 11)),
-                            backgroundColor: AppColors.surfaceDark,
-                            side: BorderSide.none,
-                            padding: EdgeInsets.zero,
-                          ))
-                      .toList(),
+                  children:
+                      p.specs.entries
+                          .take(4)
+                          .map(
+                            (e) => Chip(
+                              label: Text(
+                                '${e.key}: ${e.value}',
+                                style: const TextStyle(fontSize: 11),
+                              ),
+                              backgroundColor: AppColors.surfaceDark,
+                              side: BorderSide.none,
+                              padding: EdgeInsets.zero,
+                            ),
+                          )
+                          .toList(),
                 ),
               ),
             Container(
@@ -203,7 +216,9 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     children: [
                       Text(
                         PriceFormatter.formatWithCurrency(p.price),
-                        style: text.titleLarge?.copyWith(color: AppColors.accent),
+                        style: text.titleLarge?.copyWith(
+                          color: AppColors.accent,
+                        ),
                       ),
                       if (p.oldPrice != null)
                         Text(
@@ -219,10 +234,9 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   const Spacer(),
                   Builder(
                     builder: (context) {
-                      final inCart = context
-                          .watch<CartModel>()
-                          .items
-                          .any((i) => i.product.id == p.id);
+                      final inCart = context.watch<CartModel>().items.any(
+                        (i) => i.product.id == p.id,
+                      );
                       return ElevatedButton.icon(
                         onPressed: () {
                           context.read<CartModel>().add(p);
@@ -271,4 +285,3 @@ class _Stat extends StatelessWidget {
     );
   }
 }
-
