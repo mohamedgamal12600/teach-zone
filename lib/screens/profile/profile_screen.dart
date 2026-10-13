@@ -19,7 +19,7 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
-    final authModel = context.read<AuthModel>();
+    final authModel = context.watch<AuthModel>();
     final user = authModel.currentUser;
 
     return Scaffold(
@@ -111,37 +111,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
             icon: Icons.edit_outlined,
             label: 'Edit Profile',
             onTap: () {
-              final ctrl = TextEditingController(text: user.displayName ?? '');
               showDialog(
                 context: context,
                 builder:
-                    (ctx) => AlertDialog(
-                      backgroundColor: AppColors.surface,
-                      title: const Text(
-                        'Edit Name',
-                        style: TextStyle(color: AppColors.textPrimary),
-                      ),
-                      content: TextField(
-                        controller: ctrl,
-                        decoration: const InputDecoration(
-                          hintText: 'Full name',
-                        ),
-                      ),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.pop(ctx),
-                          child: const Text('Cancel'),
-                        ),
-                        ElevatedButton(
-                          onPressed: () async {
-                            final name = ctrl.text.trim();
-                            Navigator.pop(ctx);
-                            if (name.isEmpty) return;
-                            await authModel.updateProfile(fullName: name);
-                          },
-                          child: const Text('Save'),
-                        ),
-                      ],
+                    (_) => _EditNameDialog(
+                      initialName: user.displayName ?? '',
                     ),
               );
             },
@@ -162,11 +136,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
             icon: Icons.lock_reset_outlined,
             label: 'Reset Password',
             onTap: () async {
+              final email = user.email;
               final messenger = ScaffoldMessenger.of(context);
-              await authModel.sendPasswordResetEmail(user.email!);
-              messenger.showSnackBar(
-                const SnackBar(content: Text('Password reset email sent.')),
-              );
+              if (email == null || email.trim().isEmpty) {
+                messenger.showSnackBar(
+                  const SnackBar(
+                    content: Text('No email associated with this account.'),
+                  ),
+                );
+                return;
+              }
+              try {
+                await authModel.sendPasswordResetEmail(email);
+                messenger.showSnackBar(
+                  const SnackBar(content: Text('Password reset email sent.')),
+                );
+              } catch (e) {
+                messenger.showSnackBar(
+                  SnackBar(
+                    content: Text('Failed to send password reset email: $e'),
+                  ),
+                );
+              }
             },
           ),
           const SizedBox(height: 32),
@@ -247,3 +238,93 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   String _fmtDate(DateTime d) => '${d.day}/${d.month}/${d.year}';
 }
+
+class _EditNameDialog extends StatefulWidget {
+  final String initialName;
+
+  const _EditNameDialog({required this.initialName});
+
+  @override
+  State<_EditNameDialog> createState() => _EditNameDialogState();
+}
+
+class _EditNameDialogState extends State<_EditNameDialog> {
+  late final TextEditingController _ctrl;
+  bool _saving = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = TextEditingController(text: widget.initialName);
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  Future<void> _save() async {
+    final name = _ctrl.text.trim();
+    if (name.isEmpty) return;
+
+    final authModel = context.read<AuthModel>();
+    final messenger = ScaffoldMessenger.of(context);
+    final navigator = Navigator.of(context);
+
+    setState(() => _saving = true);
+    try {
+      await authModel.updateProfile(fullName: name);
+      navigator.pop();
+      messenger.showSnackBar(
+        const SnackBar(content: Text('Profile updated successfully.')),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      messenger.showSnackBar(
+        SnackBar(content: Text('Failed to update profile: $e')),
+      );
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      backgroundColor: AppColors.surface,
+      title: const Text(
+        'Edit Name',
+        style: TextStyle(color: AppColors.textPrimary),
+      ),
+      content: TextField(
+        controller: _ctrl,
+        enabled: !_saving,
+        decoration: const InputDecoration(
+          hintText: 'Full name',
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: _saving ? null : () => Navigator.pop(context),
+          child: const Text('Cancel'),
+        ),
+        ElevatedButton(
+          onPressed: _saving ? null : _save,
+          child:
+              _saving
+                  ? const SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: AppColors.surfaceDark,
+                    ),
+                  )
+                  : const Text('Save'),
+        ),
+      ],
+    );
+  }
+}
+
