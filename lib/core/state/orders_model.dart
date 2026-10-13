@@ -47,6 +47,7 @@ class OrdersModel extends ChangeNotifier {
   /// it to the local list. Returns the generated Firestore document ID.
   Future<String> placeOrder({
     required String uid,
+    String customerName = '',
     required List<CartItem> items,
     required double subtotal,
     required double deliveryFee,
@@ -57,6 +58,7 @@ class OrdersModel extends ChangeNotifier {
   }) async {
     final orderId = await _firestoreService.createOrder(
       uid: uid,
+      customerName: customerName,
       items: items,
       subtotal: subtotal,
       deliveryFee: deliveryFee,

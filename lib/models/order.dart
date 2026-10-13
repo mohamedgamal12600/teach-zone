@@ -69,6 +69,7 @@ class OrderLineItem {
 class AppOrder {
   final String id;
   final String userId;
+  final String customerName;
   final List<OrderLineItem> items;
   final double subtotal;
   final double deliveryFee;
@@ -82,6 +83,7 @@ class AppOrder {
   const AppOrder({
     required this.id,
     required this.userId,
+    this.customerName = '',
     required this.items,
     required this.subtotal,
     required this.deliveryFee,
@@ -98,6 +100,7 @@ class AppOrder {
     return AppOrder(
       id: id,
       userId: data['userId'] as String? ?? '',
+      customerName: data['customerName'] as String? ?? '',
       items:
           (data['items'] as List<dynamic>? ?? [])
               .map((e) => OrderLineItem.fromMap(e as Map<String, dynamic>))

@@ -29,6 +29,7 @@ class FirestoreService {
   /// Returns the generated Firestore document ID.
   Future<String> createOrder({
     required String uid,
+    String customerName = '',
     required List<CartItem> items,
     required double subtotal,
     required double deliveryFee,
@@ -52,18 +53,21 @@ class FirestoreService {
     final docRef = _ordersRef(uid).doc();
     final now = Timestamp.now();
 
-    await docRef.set({
-      'userId': uid,
-      'items': lineItems.map((li) => li.toMap()).toList(),
-      'subtotal': subtotal,
-      'deliveryFee': deliveryFee,
-      'total': total,
-      'address': address,
-      'phone': phone,
-      'paymentMethod': paymentMethod,
-      'status': 'active',
-      'createdAt': now,
-    });
+    await docRef
+        .set({
+          'userId': uid,
+          'customerName': customerName,
+          'items': lineItems.map((li) => li.toMap()).toList(),
+          'subtotal': subtotal,
+          'deliveryFee': deliveryFee,
+          'total': total,
+          'address': address,
+          'phone': phone,
+          'paymentMethod': paymentMethod,
+          'status': 'active',
+          'createdAt': now,
+        })
+        .timeout(const Duration(seconds: 15));
 
     return docRef.id;
   }

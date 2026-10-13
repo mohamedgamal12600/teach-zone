@@ -1,6 +1,6 @@
 // screens/checkout.dart
-// ignore_for_file: use_build_context_synchronously
 
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -40,41 +40,74 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     super.dispose();
   }
 
+  String _friendlyErrorMessage(Object error) {
+    if (error is TimeoutException) {
+      return 'Request timed out. Please check your internet connection and try again.';
+    }
+    final text = error.toString().toLowerCase();
+    if (text.contains('timeout')) {
+      return 'Request timed out. Please check your internet connection and try again.';
+    }
+    if (text.contains('network') || text.contains('unavailable')) {
+      return 'Network error. Please verify your connection and try again.';
+    }
+    if (text.contains('permission-denied') || text.contains('permission_denied')) {
+      return 'Permission denied. Please verify your account and try again.';
+    }
+    return 'Failed to place order. Please try again.';
+  }
+
   Future<void> _placeOrder() async {
     if (!_formKey.currentState!.validate()) return;
-    if (context.read<CartModel>().items.isEmpty) {
+
+    final cartModel = context.read<CartModel>();
+    if (cartModel.items.isEmpty) {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(const SnackBar(content: Text('Your cart is empty.')));
       return;
     }
-    final uid = context.read<AuthModel>().currentUser?.uid;
+
+    final authModel = context.read<AuthModel>();
+    final uid = authModel.currentUser?.uid;
     if (uid == null) {
       Navigator.pushNamed(context, '/login');
       return;
     }
 
+    final ordersModel = context.read<OrdersModel>();
+    final messenger = ScaffoldMessenger.of(context);
+    final navigator = Navigator.of(context);
+    final items = cartModel.items.toList();
+    final subtotal = cartModel.subtotal;
+    final deliveryCharge = cartModel.deliveryCharge;
+    final total = cartModel.total;
+    final customerName = _nameCtrl.text.trim();
+    final address = _addressCtrl.text.trim();
+    final phone = _phoneCtrl.text.trim();
+    final payment = _payment;
+
     setState(() => _loading = true);
     try {
-      final ordersModel = context.read<OrdersModel>();
       await ordersModel.placeOrder(
         uid: uid,
-        items: context.read<CartModel>().items.toList(),
-        subtotal: context.read<CartModel>().subtotal,
-        deliveryFee: context.read<CartModel>().deliveryCharge,
-        total: context.read<CartModel>().total,
-        address: _addressCtrl.text.trim(),
-        phone: _phoneCtrl.text.trim(),
-        paymentMethod: _payment,
+        customerName: customerName,
+        items: items,
+        subtotal: subtotal,
+        deliveryFee: deliveryCharge,
+        total: total,
+        address: address,
+        phone: phone,
+        paymentMethod: payment,
       );
       // Only clear the cart AFTER the order has been successfully saved.
-      context.read<CartModel>().clear();
+      cartModel.clear();
       if (!mounted) return;
       showDialog(
         context: context,
         barrierDismissible: false,
         builder:
-            (_) => AlertDialog(
+            (dialogContext) => AlertDialog(
               backgroundColor: AppColors.surface,
               title: const Text(
                 'Order Placed!',
@@ -87,8 +120,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               actions: [
                 ElevatedButton(
                   onPressed: () {
-                    Navigator.pop(context); // close dialog
-                    Navigator.pop(context); // leave checkout
+                    Navigator.pop(dialogContext); // close dialog
+                    navigator.pop(); // leave checkout
                   },
                   child: const Text('Great!'),
                 ),
@@ -97,9 +130,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       );
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Failed to place order: $e')));
+      messenger.showSnackBar(
+        SnackBar(content: Text(_friendlyErrorMessage(e))),
+      );
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -136,12 +169,16 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               controller: _phoneCtrl,
               keyboardType: TextInputType.phone,
               decoration: const InputDecoration(
-                hintText: 'Phone number',
+                hintText: 'Phone number (e.g. 01012345678)',
                 prefixIcon: Icon(Icons.phone_outlined, size: 20),
               ),
               validator: (v) {
                 if (v == null || v.trim().isEmpty) return 'Phone is required.';
-                if (v.trim().length < 10) return 'Enter a valid phone number.';
+                final trimmed = v.trim();
+                final egPhoneRegex = RegExp(r'^01[0125]\d{8}$');
+                if (!egPhoneRegex.hasMatch(trimmed)) {
+                  return 'Enter a valid Egyptian phone number (e.g. 010xxxxxxxx).';
+                }
                 return null;
               },
             ),
