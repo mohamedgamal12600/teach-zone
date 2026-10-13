@@ -2,6 +2,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:provider/single_child_widget.dart';
 
 import 'core/state/auth_model.dart';
 import 'core/state/cart_model.dart';
@@ -28,11 +29,11 @@ import 'screens/search/search_screen.dart';
 
 // Providers for the app-wide state.
 class TechZoneProviders {
-  static List<ChangeNotifierProvider> get providers => [
-    ChangeNotifierProvider(create: (_) => AuthModel()),
-    ChangeNotifierProvider(create: (_) => CartModel()),
-    ChangeNotifierProvider(create: (_) => FavoritesModel()),
-    ChangeNotifierProvider(create: (_) => OrdersModel()),
+  static List<SingleChildWidget> get providers => [
+    ChangeNotifierProvider<AuthModel>(create: (_) => AuthModel()),
+    ChangeNotifierProvider<CartModel>(create: (_) => CartModel()),
+    ChangeNotifierProvider<FavoritesModel>(create: (_) => FavoritesModel()),
+    ChangeNotifierProvider<OrdersModel>(create: (_) => OrdersModel()),
   ];
 }
 
