@@ -23,14 +23,17 @@ lib/
   core/
     constants/
       app_assets.dart                # 35 asset path constants
-    theme/
-      app_colors.dart, app_theme.dart
+    services/
+      auth_service.dart              # Firebase Auth + profile sync
+      firestore_service.dart         # Orders CRUD
     state/
-      auth_model.dart                # Firebase Auth wrapper (ChangeNotifier)
+      auth_model.dart                # Provider wrapper for AuthService
       cart_model.dart                # Shopping cart state (ChangeNotifier)
       favorites_model.dart           # Favorites set (ChangeNotifier)
-      orders_model.dart              # Firestore orders sync (ChangeNotifier)
+      orders_model.dart              # Provider wrapper for FirestoreService
       cart_item.dart                 # Cart line item
+    theme/
+      app_colors.dart, app_theme.dart
     utils/
       price_formatter.dart           # EGP formatting (format, formatWithCurrency)
   models/
@@ -44,21 +47,39 @@ lib/
     categories.dart                  # 6 categories (Consoles, Laptops, Smartphones, Headphones, Tablets, Accessories)
     brand_logos.dart                 # Re-exports brandLogos
   screens/
-    splash.dart
-    onboarding.dart
-    login.dart
-    create_account.dart
-    home.dart
-    categories.dart
-    products.dart
-    product_details.dart
-    search.dart
-    compare_products.dart
-    favorites.dart
-    cart.dart
-    checkout.dart
-    orders.dart
-    profile.dart
+    auth/
+      login_screen.dart
+      create_account_screen.dart
+    home/
+      home_screen.dart
+      widgets/
+    products/
+      products_screen.dart
+      product_details_screen.dart
+      widgets/
+    categories/
+      categories_screen.dart
+    cart/
+      cart_screen.dart
+      widgets/
+    checkout/
+      checkout_screen.dart
+      widgets/
+    orders/
+      orders_screen.dart
+      widgets/
+    profile/
+      profile_screen.dart
+      widgets/
+    search/
+      search_screen.dart
+    favorites/
+      favorites_screen.dart
+    compare/
+      compare_screen.dart
+    onboarding/
+      onboarding_screen.dart
+      splash_screen.dart
   widgets/
     product_card.dart
     category_tabs.dart
@@ -74,9 +95,9 @@ assets/images/                       # 35 PNG images (snake_case)
 | 1 | ✅ | Assets renamed to snake_case, AppAssets constants, all 35 products mapped |
 | 2 | ✅ | Brand/Category models, Consoles category, single Order model, PriceFormatter |
 | 3 | ✅ | Global singletons → Provider (ChangeNotifierProvider for auth, cart, favorites, orders) |
-| 4 | 🔄 | Firebase Auth/Firestore → dedicated services (auth_service, firestore_service) |
-| 5 | ⏳ | Feature-based folders, split widgets/controllers, loading/empty/error states |
-| 6 | ⏳ | Cleanup, dart format, analyzer warnings, final folder tree |
+| 4 | ✅ | Firebase Auth/Firestore → dedicated services (auth_service, firestore_service) |
+| 5 | ✅ | Feature-based folders, split widgets/controllers, loading/empty/error states |
+| 6 | ✅ | Cleanup, dart format, analyzer warnings, final folder tree |
 
 ## Running
 
