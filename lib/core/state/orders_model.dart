@@ -1,41 +1,26 @@
 // orders_model.dart
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import '../../models/cart_item.dart';
 import '../../models/order.dart';
+import '../services/firestore_service.dart';
 
 export '../../models/order.dart';
 
-// ── Model ────────────────────────────────────────────────────────────────────
-
-/// ChangeNotifier that manages the current user's orders via Firestore.
+/// ChangeNotifier that manages the current user's orders via [FirestoreService].
 class OrdersModel extends ChangeNotifier {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirestoreService _firestoreService = FirestoreService();
 
   List<AppOrder> _orders = [];
 
   /// The list of orders loaded for the signed-in user, most recent first.
   List<AppOrder> get orders => List.unmodifiable(_orders);
 
-  // ── Firestore helpers ────────────────────────────────────────────────────────
-
-  CollectionReference<Map<String, dynamic>> _ordersRef(String uid) =>
-      _firestore.collection('users').doc(uid).collection('orders');
-
-  // ── Public API ───────────────────────────────────────────────────────────────
+  // Public API
 
   /// Fetches orders for [uid] from Firestore, ordered by creation time
   /// descending, and rebuilds the local list.
   Future<void> loadOrders(String uid) async {
-    final snapshot = await _ordersRef(uid)
-        .orderBy('createdAt', descending: true)
-        .get();
-
-    _orders = snapshot.docs
-        .map((doc) =>
-            AppOrder.fromDoc(doc as DocumentSnapshot<Map<String, dynamic>>))
-        .toList();
-
+    _orders = await _firestoreService.fetchOrders(uid);
     notifyListeners();
   }
 
@@ -51,54 +36,21 @@ class OrdersModel extends ChangeNotifier {
     required String phone,
     required String paymentMethod,
   }) async {
-    final lineItems = items
-        .map(
-          (ci) => OrderLineItem(
-            productId: ci.product.id,
-            productName: ci.product.name,
-            unitPrice: ci.product.price,
-            quantity: ci.quantity,
-          ),
-        )
-        .toList();
-
-    final docRef = _ordersRef(uid).doc();
-
-    final now = Timestamp.now();
-
-    await docRef.set({
-      'userId': uid,
-      'items': lineItems.map((li) => li.toMap()).toList(),
-      'subtotal': subtotal,
-      'deliveryFee': deliveryFee,
-      'total': total,
-      'address': address,
-      'phone': phone,
-      'paymentMethod': paymentMethod,
-      'status': 'active',
-      'createdAt': now,
-    });
-
-    // Optimistically prepend the new order so the UI updates immediately.
-    _orders.insert(
-      0,
-      AppOrder(
-        id: docRef.id,
-        userId: uid,
-        items: lineItems,
-        subtotal: subtotal,
-        deliveryFee: deliveryFee,
-        total: total,
-        address: address,
-        phone: phone,
-        paymentMethod: paymentMethod,
-        status: 'active',
-        createdAt: now.toDate(),
-      ),
+    final orderId = await _firestoreService.createOrder(
+      uid: uid,
+      items: items,
+      subtotal: subtotal,
+      deliveryFee: deliveryFee,
+      total: total,
+      address: address,
+      phone: phone,
+      paymentMethod: paymentMethod,
     );
 
+    // Note: In a production app, we might want to refetch the full order
+    // instead of optimistically constructing it here to ensure consistency.
     notifyListeners();
-    return docRef.id;
+    return orderId;
   }
 
   /// Clears the locally cached orders (e.g., on sign-out).
