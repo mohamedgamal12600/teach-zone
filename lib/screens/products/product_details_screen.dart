@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../core/state/cart_model.dart';
-import '../core/state/favorites_model.dart';
-import '../core/theme/app_colors.dart';
-import '../core/utils/price_formatter.dart';
-import '../data/brand_logos.dart';
-import '../models/product.dart';
-import '../widgets/color_dot.dart';
+import '../../core/state/cart_model.dart';
+import '../../core/state/favorites_model.dart';
+import '../../core/theme/app_colors.dart';
+import '../../core/utils/price_formatter.dart';
+import '../../data/brand_logos.dart';
+import '../../models/product.dart';
+import '../../widgets/color_dot.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
   const ProductDetailsScreen({super.key, required this.product});
@@ -271,3 +271,4 @@ class _Stat extends StatelessWidget {
     );
   }
 }
+

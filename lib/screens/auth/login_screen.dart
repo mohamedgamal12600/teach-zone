@@ -4,8 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../core/state/auth_model.dart';
-import '../core/theme/app_colors.dart';
+import '../../core/state/auth_model.dart';
+import '../../core/theme/app_colors.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -216,3 +216,4 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 }
+

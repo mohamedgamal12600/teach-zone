@@ -1,11 +1,11 @@
 // products.dart
 import 'package:flutter/material.dart';
 
-import '../data/products.dart' as catalog;
-import '../core/state/cart_model.dart';
-import '../core/state/favorites_model.dart';
+import '../../data/products.dart' as catalog;
+import '../../core/state/cart_model.dart';
+import '../../core/state/favorites_model.dart';
 import 'package:provider/provider.dart';
-import '../widgets/product_card.dart';
+import '../../widgets/product_card.dart';
 
 class ProductsScreen extends StatelessWidget {
   final String category;
@@ -60,3 +60,4 @@ class ProductsScreen extends StatelessWidget {
     );
   }
 }
+

@@ -2,10 +2,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../core/state/favorites_model.dart';
-import '../core/theme/app_colors.dart';
-import '../data/products.dart';
-import '../widgets/product_card.dart';
+import '../../core/state/favorites_model.dart';
+import '../../core/theme/app_colors.dart';
+import '../../data/products.dart';
+import '../../widgets/product_card.dart';
 
 class FavoritesScreen extends StatelessWidget {
   const FavoritesScreen({super.key});
@@ -59,3 +59,4 @@ class FavoritesScreen extends StatelessWidget {
     );
   }
 }
+

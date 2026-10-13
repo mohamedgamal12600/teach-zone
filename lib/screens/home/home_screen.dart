@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../core/state/cart_model.dart';
-import '../core/state/favorites_model.dart';
-import '../core/theme/app_colors.dart';
-import '../data/products.dart';
-import '../models/product.dart';
-import '../widgets/app_bottom_bar.dart';
-import '../widgets/category_tabs.dart';
-import '../widgets/product_card.dart';
-import 'cart.dart';
-import 'profile.dart';
+import '../../core/state/cart_model.dart';
+import '../../core/state/favorites_model.dart';
+import '../../core/theme/app_colors.dart';
+import '../../data/products.dart';
+import '../../models/product.dart';
+import '../../widgets/app_bottom_bar.dart';
+import '../../widgets/category_tabs.dart';
+import '../../widgets/product_card.dart';
+import '../cart/cart_screen.dart';
+import '../profile/profile_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -200,3 +200,4 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
+

@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
 
-import '../core/state/auth_model.dart';
-import '../core/theme/app_colors.dart';
+import '../../core/state/auth_model.dart';
+import '../../core/theme/app_colors.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -89,3 +89,4 @@ class _SplashScreenState extends State<SplashScreen>
     );
   }
 }
+

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../core/state/cart_model.dart';
-import '../core/theme/app_colors.dart';
-import '../core/utils/price_formatter.dart';
-import '../data/products.dart';
-import '../models/product.dart';
+import '../../core/state/cart_model.dart';
+import '../../core/theme/app_colors.dart';
+import '../../core/utils/price_formatter.dart';
+import '../../data/products.dart';
+import '../../models/product.dart';
 
 class CompareProductsScreen extends StatefulWidget {
   const CompareProductsScreen({super.key});
@@ -307,3 +307,4 @@ class _ProductHeader extends StatelessWidget {
     );
   }
 }
+

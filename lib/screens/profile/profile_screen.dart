@@ -2,10 +2,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../core/state/auth_model.dart';
-import '../core/state/cart_model.dart';
-import '../core/state/favorites_model.dart';
-import '../core/theme/app_colors.dart';
+import '../../core/state/auth_model.dart';
+import '../../core/state/cart_model.dart';
+import '../../core/state/favorites_model.dart';
+import '../../core/theme/app_colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class ProfileScreen extends StatefulWidget {

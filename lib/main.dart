@@ -10,21 +10,21 @@ import 'core/state/orders_model.dart';
 import 'core/theme/app_theme.dart';
 import 'firebase_options.dart';
 import 'models/product.dart';
-import 'screens/cart.dart';
-import 'screens/categories.dart';
-import 'screens/checkout.dart';
-import 'screens/compare_products.dart';
-import 'screens/create_account.dart';
-import 'screens/favorites.dart';
-import 'screens/home.dart';
-import 'screens/login.dart';
-import 'screens/onboarding.dart';
-import 'screens/orders.dart';
-import 'screens/product_details.dart';
-import 'screens/products.dart';
-import 'screens/profile.dart';
-import 'screens/search.dart';
-import 'screens/splash.dart';
+import 'screens/auth/create_account_screen.dart';
+import 'screens/auth/login_screen.dart';
+import 'screens/cart/cart_screen.dart';
+import 'screens/categories/categories_screen.dart';
+import 'screens/checkout/checkout_screen.dart';
+import 'screens/compare/compare_screen.dart';
+import 'screens/favorites/favorites_screen.dart';
+import 'screens/home/home_screen.dart';
+import 'screens/onboarding/onboarding_screen.dart';
+import 'screens/onboarding/splash_screen.dart';
+import 'screens/orders/orders_screen.dart';
+import 'screens/products/product_details_screen.dart';
+import 'screens/products/products_screen.dart';
+import 'screens/profile/profile_screen.dart';
+import 'screens/search/search_screen.dart';
 
 // Providers for the app-wide state.
 class TechZoneProviders {
@@ -54,22 +54,22 @@ class TechZoneApp extends StatelessWidget {
         title: 'TechZone',
         theme: AppTheme.dark,
         initialRoute: '/',
-        routes: {
-          '/': (_) => const SplashScreen(),
-          '/onboarding': (_) => const OnboardingScreen(),
-          '/home': (_) => const HomeScreen(),
-          '/login': (_) => const LoginScreen(),
-          '/create_account': (_) => const CreateAccountScreen(),
-          '/categories': (_) => const CategoriesScreen(),
-          '/products': (_) => const ProductsScreen(),
-          '/search': (_) => const SearchScreen(),
-          '/favorites': (_) => const FavoritesScreen(),
-          '/compare_products': (_) => const CompareProductsScreen(),
-          '/cart': (_) => const CartScreen(),
-          '/checkout': (_) => const CheckoutScreen(),
-          '/orders': (_) => const OrdersScreen(),
-          '/profile': (_) => const ProfileScreen(),
-        },
+routes: {
+        '/': (_) => const SplashScreen(),
+        '/onboarding': (_) => const OnboardingScreen(),
+        '/home': (_) => const HomeScreen(),
+        '/login': (_) => const LoginScreen(),
+        '/create_account': (_) => const CreateAccountScreen(),
+        '/categories': (_) => const CategoriesScreen(),
+        '/products': (_) => const ProductsScreen(),
+        '/search': (_) => const SearchScreen(),
+        '/favorites': (_) => const FavoritesScreen(),
+        '/compare_products': (_) => const CompareProductsScreen(),
+        '/cart': (_) => const CartScreen(),
+        '/checkout': (_) => const CheckoutScreen(),
+        '/orders': (_) => const OrdersScreen(),
+        '/profile': (_) => const ProfileScreen(),
+      },
         onGenerateRoute: (settings) {
           if (settings.name == '/product_details') {
             final product = settings.arguments as Product;

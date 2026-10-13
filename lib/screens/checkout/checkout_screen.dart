@@ -4,11 +4,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../core/state/cart_model.dart';
-import '../core/state/auth_model.dart';
-import '../core/state/orders_model.dart';
-import '../core/theme/app_colors.dart';
-import '../core/utils/price_formatter.dart';
+import '../../core/state/cart_model.dart';
+import '../../core/state/auth_model.dart';
+import '../../core/state/orders_model.dart';
+import '../../core/theme/app_colors.dart';
+import '../../core/utils/price_formatter.dart';
 
 class CheckoutScreen extends StatefulWidget {
   const CheckoutScreen({super.key});

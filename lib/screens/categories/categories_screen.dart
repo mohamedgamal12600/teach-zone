@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../core/state/cart_model.dart';
-import '../core/state/favorites_model.dart';
-import '../data/products.dart';
-import '../models/product.dart';
-import '../widgets/category_tabs.dart';
-import '../widgets/product_card.dart';
+import '../../core/state/cart_model.dart';
+import '../../core/state/favorites_model.dart';
+import '../../data/products.dart';
+import '../../models/product.dart';
+import '../../widgets/category_tabs.dart';
+import '../../widgets/product_card.dart';
 
 class CategoriesScreen extends StatefulWidget {
   const CategoriesScreen({super.key});
@@ -102,3 +102,4 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
     );
   }
 }
+

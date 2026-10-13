@@ -4,8 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../core/state/auth_model.dart';
-import '../core/theme/app_colors.dart';
+import '../../core/state/auth_model.dart';
+import '../../core/theme/app_colors.dart';
 
 class CreateAccountScreen extends StatefulWidget {
   const CreateAccountScreen({super.key});
@@ -234,3 +234,4 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     );
   }
 }
+
