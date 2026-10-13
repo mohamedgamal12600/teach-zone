@@ -113,4 +113,4 @@ flutter build apk
 - Flutter SDK 3.22+
 - Android SDK (API 34+)
 - Firebase project with Auth (email/password) + Firestore enabled
-- `firebase_options.dart` generated via FlutterFire CLI
+- `firebase_options.dart` generated via FlutterFire CLI# iOS Build Trigger
