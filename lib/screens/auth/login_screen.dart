@@ -1,4 +1,6 @@
-// login.dart
+// screens/auth/login_screen.dart
+// ignore_for_file: curly_braces_in_flow_control_structures
+
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -46,7 +48,11 @@ class _LoginScreenState extends State<LoginScreen> {
         _passCtrl.text,
       );
       if (!mounted) return;
-      Navigator.pushReplacementNamed(context, '/home');
+      if (Navigator.canPop(context)) {
+        Navigator.pop(context, true);
+      } else {
+        Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+      }
     } on FirebaseAuthException catch (e) {
       if (!mounted) return;
       setState(() => _error = _mapError(e.code, e.message));
@@ -79,6 +85,14 @@ class _LoginScreenState extends State<LoginScreen> {
     } on TimeoutException catch (e) {
       if (!mounted) return;
       setState(() => _error = e.message ?? 'Password reset timed out.');
+    }
+  }
+
+  void _continueAsGuest() {
+    if (Navigator.canPop(context)) {
+      Navigator.pop(context, false);
+    } else {
+      Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
     }
   }
 
@@ -207,6 +221,18 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                             )
                             : const Text('Sign In'),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton(
+                    onPressed: _loading ? null : _continueAsGuest,
+                    style: OutlinedButton.styleFrom(
+                      minimumSize: const Size(double.infinity, 48),
+                      shape: const StadiumBorder(),
+                    ),
+                    child: const Text('Continue as Guest'),
                   ),
                 ),
                 const SizedBox(height: 20),

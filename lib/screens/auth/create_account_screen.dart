@@ -1,4 +1,6 @@
-// create_account.dart
+// screens/auth/create_account_screen.dart
+// ignore_for_file: curly_braces_in_flow_control_structures
+
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -53,7 +55,11 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
         _nameCtrl.text.trim(),
       );
       if (!mounted) return;
-      Navigator.pushReplacementNamed(context, '/home');
+      if (Navigator.canPop(context)) {
+        Navigator.pop(context, true);
+      } else {
+        Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+      }
     } on FirebaseAuthException catch (e) {
       if (!mounted) return;
       setState(() => _error = _mapError(e.code, e.message));

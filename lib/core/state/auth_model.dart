@@ -2,23 +2,40 @@
 // ChangeNotifier that wraps [AuthService] and exposes authentication
 // operations together with resilient Firestore profile management.
 
+import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import '../services/auth_service.dart';
 
 class AuthModel extends ChangeNotifier {
   final AuthService _authService = AuthService();
+  StreamSubscription<User?>? _authSubscription;
+  User? _currentUser;
+
+  AuthModel() {
+    _currentUser = _authService.currentUser;
+    _authSubscription = _authService.authStateChanges.listen((user) {
+      _currentUser = user;
+      notifyListeners();
+    });
+  }
+
+  @override
+  void dispose() {
+    _authSubscription?.cancel();
+    super.dispose();
+  }
 
   // Getters
 
   /// The currently signed-in Firebase user, or `null` if not signed in.
-  User? get currentUser => _authService.currentUser;
+  User? get currentUser => _currentUser ?? _authService.currentUser;
 
   /// Stream that emits the current user whenever the auth state changes.
   Stream<User?> get authStateChanges => _authService.authStateChanges;
 
   /// `true` when a user is currently signed in.
-  bool get isSignedIn => _authService.isSignedIn;
+  bool get isSignedIn => currentUser != null;
 
   // Auth operations
 

@@ -10,6 +10,7 @@ import 'core/state/orders_model.dart';
 import 'core/theme/app_theme.dart';
 import 'firebase_options.dart';
 import 'models/product.dart';
+import 'screens/auth/auth_gate.dart';
 import 'screens/auth/create_account_screen.dart';
 import 'screens/auth/login_screen.dart';
 import 'screens/cart/cart_screen.dart';
@@ -19,7 +20,6 @@ import 'screens/compare/compare_screen.dart';
 import 'screens/favorites/favorites_screen.dart';
 import 'screens/home/home_screen.dart';
 import 'screens/onboarding/onboarding_screen.dart';
-import 'screens/onboarding/splash_screen.dart';
 import 'screens/orders/orders_screen.dart';
 import 'screens/products/product_details_screen.dart';
 import 'screens/products/products_screen.dart';
@@ -55,7 +55,7 @@ class TechZoneApp extends StatelessWidget {
         theme: AppTheme.dark,
         initialRoute: '/',
         routes: {
-          '/': (_) => const SplashScreen(),
+          '/': (_) => const AuthGate(),
           '/onboarding': (_) => const OnboardingScreen(),
           '/home': (_) => const HomeScreen(),
           '/login': (_) => const LoginScreen(),

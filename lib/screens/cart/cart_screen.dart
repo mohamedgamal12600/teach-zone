@@ -100,11 +100,15 @@ class CartScreen extends StatelessWidget {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
                 if (authModel.isSignedIn) {
                   Navigator.pushNamed(context, '/checkout');
                 } else {
-                  Navigator.pushNamed(context, '/login');
+                  final loggedIn =
+                      await Navigator.pushNamed<bool>(context, '/login');
+                  if (loggedIn == true && context.mounted) {
+                    Navigator.pushNamed(context, '/checkout');
+                  }
                 }
               },
               child: const Text('Proceed to Checkout'),
