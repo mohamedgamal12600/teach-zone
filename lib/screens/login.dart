@@ -2,8 +2,9 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-import '../main.dart' show authModel;
+import '../core/state/auth_model.dart';
 import '../core/theme/app_colors.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -40,7 +41,7 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     try {
-      await authModel.signInWithEmailAndPassword(
+      await context.read<AuthModel>().signInWithEmailAndPassword(
         _emailCtrl.text.trim(),
         _passCtrl.text,
       );
@@ -67,7 +68,7 @@ class _LoginScreenState extends State<LoginScreen> {
       return;
     }
     try {
-      await authModel.sendPasswordResetEmail(email);
+      await context.read<AuthModel>().sendPasswordResetEmail(email);
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Password reset email sent.')),

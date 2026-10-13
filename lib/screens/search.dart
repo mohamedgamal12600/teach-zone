@@ -1,9 +1,10 @@
-// search.dart
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../core/state/cart_model.dart';
+import '../core/state/favorites_model.dart';
 import '../core/theme/app_colors.dart';
 import '../data/products.dart';
-import '../main.dart' show cartModel, favoritesModel;
 import '../models/product.dart';
 import '../widgets/product_card.dart';
 
@@ -241,27 +242,27 @@ class _SearchScreenState extends State<SearchScreen> {
                     itemCount: results.length,
                     itemBuilder: (context, i) {
                       final p = results[i];
-                      return ListenableBuilder(
-                        listenable: favoritesModel,
-                        builder: (_, _) => ProductCard(
-                          product: p,
-                          isFavorite: favoritesModel.contains(p.id),
-                          onFavorite: () => favoritesModel.toggle(p.id),
-                          onTap: () => Navigator.pushNamed(
-                            context,
-                            '/product_details',
-                            arguments: p,
-                          ),
-                          onAddToCart: () {
-                            cartModel.add(p);
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('${p.name} added to cart'),
-                                duration: const Duration(seconds: 1),
-                              ),
-                            );
-                          },
+                      final isFav =
+                          context.watch<FavoritesModel>().contains(p.id);
+                      return ProductCard(
+                        product: p,
+                        isFavorite: isFav,
+                        onFavorite: () =>
+                            context.read<FavoritesModel>().toggle(p.id),
+                        onTap: () => Navigator.pushNamed(
+                          context,
+                          '/product_details',
+                          arguments: p,
                         ),
+                        onAddToCart: () {
+                          context.read<CartModel>().add(p);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('${p.name} added to cart'),
+                              duration: const Duration(seconds: 1),
+                            ),
+                          );
+                        },
                       );
                     },
                   ),

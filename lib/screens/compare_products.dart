@@ -1,9 +1,10 @@
-// compare_products.dart
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../core/state/cart_model.dart';
 import '../core/theme/app_colors.dart';
+import '../core/utils/price_formatter.dart';
 import '../data/products.dart';
-import '../main.dart' show cartModel;
 import '../models/product.dart';
 
 class CompareProductsScreen extends StatefulWidget {
@@ -73,7 +74,7 @@ class _CompareProductsScreenState extends State<CompareProductsScreen> {
                         ),
                         title: Text(p.name, style: const TextStyle(fontSize: 14)),
                         subtitle: Text(
-                          '${p.category} • EGP ${p.price.toInt()}',
+                          '${p.category} • ${PriceFormatter.formatWithCurrency(p.price)}',
                           style: const TextStyle(
                             color: AppColors.accent,
                             fontSize: 12,
@@ -157,8 +158,8 @@ class _CompareProductsScreenState extends State<CompareProductsScreen> {
                         _compareRow('Category', pA.category, pB.category),
                         _compareRow(
                           'Price',
-                          'EGP ${pA.price.toInt()}',
-                          'EGP ${pB.price.toInt()}',
+                          PriceFormatter.formatWithCurrency(pA.price),
+                          PriceFormatter.formatWithCurrency(pB.price),
                           highlightDiff: true,
                         ),
                         _compareRow(
@@ -287,7 +288,7 @@ class _ProductHeader extends StatelessWidget {
           const SizedBox(height: 6),
           ElevatedButton(
             onPressed: () {
-              cartModel.add(product);
+              context.read<CartModel>().add(product);
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text('${product.name} added to cart'),

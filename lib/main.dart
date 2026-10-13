@@ -1,6 +1,7 @@
 // main.dart
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'core/state/auth_model.dart';
 import 'core/state/cart_model.dart';
@@ -25,11 +26,15 @@ import 'screens/profile.dart';
 import 'screens/search.dart';
 import 'screens/splash.dart';
 
-// Global singleton models — shared across the whole app.
-final cartModel = CartModel();
-final favoritesModel = FavoritesModel();
-final authModel = AuthModel();
-final ordersModel = OrdersModel();
+// Providers for the app-wide state.
+class TechZoneProviders {
+  static List<ChangeNotifierProvider> get providers => [
+    ChangeNotifierProvider(create: (_) => AuthModel()),
+    ChangeNotifierProvider(create: (_) => CartModel()),
+    ChangeNotifierProvider(create: (_) => FavoritesModel()),
+    ChangeNotifierProvider(create: (_) => OrdersModel()),
+  ];
+}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -42,36 +47,39 @@ class TechZoneApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'TechZone',
-      theme: AppTheme.dark,
-      initialRoute: '/',
-      routes: {
-        '/': (_) => const SplashScreen(),
-        '/onboarding': (_) => const OnboardingScreen(),
-        '/home': (_) => const HomeScreen(),
-        '/login': (_) => const LoginScreen(),
-        '/create_account': (_) => const CreateAccountScreen(),
-        '/categories': (_) => const CategoriesScreen(),
-        '/products': (_) => const ProductsScreen(),
-        '/search': (_) => const SearchScreen(),
-        '/favorites': (_) => const FavoritesScreen(),
-        '/compare_products': (_) => const CompareProductsScreen(),
-        '/cart': (_) => const CartScreen(),
-        '/checkout': (_) => const CheckoutScreen(),
-        '/orders': (_) => const OrdersScreen(),
-        '/profile': (_) => const ProfileScreen(),
-      },
-      onGenerateRoute: (settings) {
-        if (settings.name == '/product_details') {
-          final product = settings.arguments as Product;
-          return MaterialPageRoute(
-            builder: (_) => ProductDetailsScreen(product: product),
-          );
-        }
-        return null;
-      },
+    return MultiProvider(
+      providers: TechZoneProviders.providers,
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'TechZone',
+        theme: AppTheme.dark,
+        initialRoute: '/',
+        routes: {
+          '/': (_) => const SplashScreen(),
+          '/onboarding': (_) => const OnboardingScreen(),
+          '/home': (_) => const HomeScreen(),
+          '/login': (_) => const LoginScreen(),
+          '/create_account': (_) => const CreateAccountScreen(),
+          '/categories': (_) => const CategoriesScreen(),
+          '/products': (_) => const ProductsScreen(),
+          '/search': (_) => const SearchScreen(),
+          '/favorites': (_) => const FavoritesScreen(),
+          '/compare_products': (_) => const CompareProductsScreen(),
+          '/cart': (_) => const CartScreen(),
+          '/checkout': (_) => const CheckoutScreen(),
+          '/orders': (_) => const OrdersScreen(),
+          '/profile': (_) => const ProfileScreen(),
+        },
+        onGenerateRoute: (settings) {
+          if (settings.name == '/product_details') {
+            final product = settings.arguments as Product;
+            return MaterialPageRoute(
+              builder: (_) => ProductDetailsScreen(product: product),
+            );
+          }
+          return null;
+        },
+      ),
     );
   }
 }

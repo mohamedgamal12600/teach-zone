@@ -1,8 +1,10 @@
 // splash.dart
 import 'package:flutter/material.dart';
 
+import 'package:provider/provider.dart';
+
+import '../core/state/auth_model.dart';
 import '../core/theme/app_colors.dart';
-import '../main.dart' show authModel;
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -27,8 +29,9 @@ class _SplashScreenState extends State<SplashScreen>
     _ctrl.forward();
     Future.delayed(const Duration(milliseconds: 2200), () {
       if (!mounted) return;
+      final auth = context.read<AuthModel>();
       // If the user is already signed in, go directly to home.
-      if (authModel.isSignedIn) {
+      if (auth.isSignedIn) {
         Navigator.pushReplacementNamed(context, '/home');
       } else {
         Navigator.pushReplacementNamed(context, '/login');

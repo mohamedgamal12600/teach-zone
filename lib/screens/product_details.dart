@@ -1,9 +1,11 @@
-// product_details.dart
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../core/state/cart_model.dart';
+import '../core/state/favorites_model.dart';
 import '../core/theme/app_colors.dart';
+import '../core/utils/price_formatter.dart';
 import '../data/brand_logos.dart';
-import '../main.dart' show cartModel, favoritesModel;
 import '../models/product.dart';
 import '../widgets/color_dot.dart';
 
@@ -18,17 +20,6 @@ class ProductDetailsScreen extends StatefulWidget {
 
 class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   int _color = 0;
-
-  String _fmtPrice(double v) {
-    final s = v.toStringAsFixed(0);
-    final buf = StringBuffer();
-    final len = s.length;
-    for (var i = 0; i < len; i++) {
-      if (i > 0 && (len - i) % 3 == 0) buf.write(',');
-      buf.write(s[i]);
-    }
-    return buf.toString();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,19 +46,17 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       style: text.bodyLarge,
                     ),
                   ),
-                  ListenableBuilder(
-                    listenable: favoritesModel,
-                    builder: (_, _) => IconButton(
-                      onPressed: () => favoritesModel.toggle(p.id),
-                      icon: Icon(
-                        favoritesModel.contains(p.id)
-                            ? Icons.favorite
-                            : Icons.favorite_border,
-                        size: 20,
-                        color: favoritesModel.contains(p.id)
-                            ? AppColors.danger
-                            : Colors.white,
-                      ),
+                  IconButton(
+                    onPressed: () =>
+                        context.read<FavoritesModel>().toggle(p.id),
+                    icon: Icon(
+                      context.watch<FavoritesModel>().contains(p.id)
+                          ? Icons.favorite
+                          : Icons.favorite_border,
+                      size: 20,
+                      color: context.watch<FavoritesModel>().contains(p.id)
+                          ? AppColors.danger
+                          : Colors.white,
                     ),
                   ),
                 ],
@@ -213,12 +202,12 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'EGP ${_fmtPrice(p.price)}',
+                        PriceFormatter.formatWithCurrency(p.price),
                         style: text.titleLarge?.copyWith(color: AppColors.accent),
                       ),
                       if (p.oldPrice != null)
                         Text(
-                          'EGP ${_fmtPrice(p.oldPrice!)}',
+                          PriceFormatter.formatWithCurrency(p.oldPrice!),
                           style: const TextStyle(
                             fontSize: 11,
                             color: AppColors.textSecondary,
@@ -228,13 +217,15 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     ],
                   ),
                   const Spacer(),
-                  ListenableBuilder(
-                    listenable: cartModel,
-                    builder: (_, _) {
-                      final inCart = cartModel.items.any((i) => i.product.id == p.id);
+                  Builder(
+                    builder: (context) {
+                      final inCart = context
+                          .watch<CartModel>()
+                          .items
+                          .any((i) => i.product.id == p.id);
                       return ElevatedButton.icon(
                         onPressed: () {
-                          cartModel.add(p);
+                          context.read<CartModel>().add(p);
                           final messenger = ScaffoldMessenger.of(context);
                           messenger.showSnackBar(
                             SnackBar(content: Text('${p.name} added to cart')),

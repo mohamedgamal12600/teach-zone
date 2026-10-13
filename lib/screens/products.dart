@@ -2,7 +2,9 @@
 import 'package:flutter/material.dart';
 
 import '../data/products.dart' as catalog;
-import '../main.dart' show cartModel, favoritesModel;
+import '../core/state/cart_model.dart';
+import '../core/state/favorites_model.dart';
+import 'package:provider/provider.dart';
 import '../widgets/product_card.dart';
 
 class ProductsScreen extends StatelessWidget {
@@ -33,27 +35,25 @@ class ProductsScreen extends StatelessWidget {
               itemCount: list.length,
               itemBuilder: (context, i) {
                 final p = list[i];
-                return ListenableBuilder(
-                  listenable: favoritesModel,
-                  builder: (_, _) => ProductCard(
-                    product: p,
-                    isFavorite: favoritesModel.contains(p.id),
-                    onFavorite: () => favoritesModel.toggle(p.id),
-                    onTap: () => Navigator.pushNamed(
-                      context,
-                      '/product_details',
-                      arguments: p,
-                    ),
-                    onAddToCart: () {
-                      cartModel.add(p);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('${p.name} added to cart'),
-                          duration: const Duration(seconds: 1),
-                        ),
-                      );
-                    },
+                final isFav = context.watch<FavoritesModel>().contains(p.id);
+                return ProductCard(
+                  product: p,
+                  isFavorite: isFav,
+                  onFavorite: () => context.read<FavoritesModel>().toggle(p.id),
+                  onTap: () => Navigator.pushNamed(
+                    context,
+                    '/product_details',
+                    arguments: p,
                   ),
+                  onAddToCart: () {
+                    context.read<CartModel>().add(p);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('${p.name} added to cart'),
+                        duration: const Duration(seconds: 1),
+                      ),
+                    );
+                  },
                 );
               },
             ),

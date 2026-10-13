@@ -1,19 +1,14 @@
-// checkout.dart
+// screens/checkout.dart
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../core/state/cart_model.dart';
+import '../core/state/auth_model.dart';
+import '../core/state/orders_model.dart';
 import '../core/theme/app_colors.dart';
-import '../main.dart' show cartModel, authModel, ordersModel;
-
-String _fmt(double v) {
-  final s = v.toStringAsFixed(0);
-  final buf = StringBuffer();
-  final len = s.length;
-  for (var i = 0; i < len; i++) {
-    if (i > 0 && (len - i) % 3 == 0) buf.write(',');
-    buf.write(s[i]);
-  }
-  return buf.toString();
-}
+import '../core/utils/price_formatter.dart';
 
 class CheckoutScreen extends StatefulWidget {
   const CheckoutScreen({super.key});
@@ -47,13 +42,13 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   Future<void> _placeOrder() async {
     if (!_formKey.currentState!.validate()) return;
-    if (cartModel.items.isEmpty) {
+    if (context.read<CartModel>().items.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Your cart is empty.')),
       );
       return;
     }
-    final uid = authModel.currentUser?.uid;
+    final uid = context.read<AuthModel>().currentUser?.uid;
     if (uid == null) {
       Navigator.pushNamed(context, '/login');
       return;
@@ -61,18 +56,19 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
     setState(() => _loading = true);
     try {
+      final ordersModel = context.read<OrdersModel>();
       await ordersModel.placeOrder(
         uid: uid,
-        items: cartModel.items.toList(),
-        subtotal: cartModel.subtotal,
-        deliveryFee: cartModel.deliveryCharge,
-        total: cartModel.total,
+        items: context.read<CartModel>().items.toList(),
+        subtotal: context.read<CartModel>().subtotal,
+        deliveryFee: context.read<CartModel>().deliveryCharge,
+        total: context.read<CartModel>().total,
         address: _addressCtrl.text.trim(),
         phone: _phoneCtrl.text.trim(),
         paymentMethod: _payment,
       );
       // Only clear the cart AFTER the order has been successfully saved.
-      cartModel.clear();
+      context.read<CartModel>().clear();
       if (!mounted) return;
       showDialog(
         context: context,
@@ -108,6 +104,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final cartModel = context.read<CartModel>();
     final text = Theme.of(context).textTheme;
     return Scaffold(
       appBar: AppBar(title: const Text('Checkout')),
@@ -156,27 +153,27 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             const SizedBox(height: 24),
             Text('Payment Method', style: text.titleMedium),
             ...(_paymentMethods.map((m) {
-                  final isSelected = _payment == m;
-                  return InkWell(
-                    onTap: () => setState(() => _payment = m),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 6),
-                      child: Row(
-                        children: [
-                          Icon(
-                            isSelected
-                                ? Icons.radio_button_checked
-                                : Icons.radio_button_unchecked,
-                            color: isSelected ? AppColors.accent : AppColors.textSecondary,
-                            size: 20,
-                          ),
-                          const SizedBox(width: 12),
-                          Text(m, style: text.bodyLarge),
-                        ],
+              final isSelected = _payment == m;
+              return InkWell(
+                onTap: () => setState(() => _payment = m),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 6),
+                  child: Row(
+                    children: [
+                      Icon(
+                        isSelected
+                            ? Icons.radio_button_checked
+                            : Icons.radio_button_unchecked,
+                        color: isSelected ? AppColors.accent : AppColors.textSecondary,
+                        size: 20,
                       ),
-                    ),
-                  );
-                })),
+                      const SizedBox(width: 12),
+                      Text(m, style: text.bodyLarge),
+                    ],
+                  ),
+                ),
+              );
+            })),
             const SizedBox(height: 24),
             Text('Order Summary', style: text.titleMedium),
             const SizedBox(height: 12),
@@ -186,7 +183,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: AppColors.surface,
-                  borderRadius: BorderRadius.circular(AppRadius.card),
+                  borderRadius: BorderRadius.circular(16),
                 ),
                 child: Column(
                   children: [
@@ -197,12 +194,12 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                           children: [
                             Expanded(
                               child: Text(
-                                '${ci.product.name} × ${ci.quantity}',
+                                '${ci.product.name} x ${ci.quantity}',
                                 style: text.bodyLarge?.copyWith(fontSize: 13),
                               ),
                             ),
                             Text(
-                              'EGP ${_fmt(ci.product.price * ci.quantity)}',
+                              PriceFormatter.formatWithCurrency(ci.product.price * ci.quantity),
                               style: const TextStyle(
                                   fontWeight: FontWeight.w600, fontSize: 13),
                             ),
@@ -211,18 +208,18 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       ),
                     ),
                     const Divider(height: 20),
-                    _Row('Subtotal', 'EGP ${_fmt(cartModel.subtotal)}', text),
+                    _Row('Subtotal', PriceFormatter.formatWithCurrency(cartModel.subtotal), text),
                     _Row(
                       'Delivery',
                       cartModel.deliveryCharge == 0
                           ? 'Free'
-                          : 'EGP ${_fmt(cartModel.deliveryCharge)}',
+                          : PriceFormatter.formatWithCurrency(cartModel.deliveryCharge),
                       text,
                     ),
                     const Divider(height: 16),
                     _Row(
                       'Total',
-                      'EGP ${_fmt(cartModel.total)}',
+                      PriceFormatter.formatWithCurrency(cartModel.total),
                       text,
                       bold: true,
                     ),
@@ -267,7 +264,7 @@ class _Row extends StatelessWidget {
   Widget build(BuildContext context) {
     final style = text.bodyLarge?.copyWith(
       fontWeight: bold ? FontWeight.w700 : FontWeight.w400,
-      color: bold ? AppColors.accent : null,
+      fontSize: bold ? 16 : 14,
     );
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2),

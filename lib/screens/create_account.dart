@@ -2,8 +2,9 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-import '../main.dart' show authModel;
+import '../core/state/auth_model.dart';
 import '../core/theme/app_colors.dart';
 
 class CreateAccountScreen extends StatefulWidget {
@@ -46,7 +47,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     });
 
     try {
-      await authModel.createUserWithEmailAndPassword(
+      await context.read<AuthModel>().createUserWithEmailAndPassword(
         _emailCtrl.text.trim(),
         _passCtrl.text,
         _nameCtrl.text.trim(),

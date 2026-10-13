@@ -1,8 +1,12 @@
-// profile.dart
+// screens/profile.dart
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../core/state/auth_model.dart';
+import '../core/state/cart_model.dart';
+import '../core/state/favorites_model.dart';
 import '../core/theme/app_colors.dart';
-import '../main.dart' show authModel, cartModel, favoritesModel, ordersModel;
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -13,91 +17,43 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   @override
-  void initState() {
-    super.initState();
-    authModel.addListener(_rebuild);
-  }
+  Widget build(BuildContext context) {
+    final authModel = context.read<AuthModel>();
+    final user = authModel.currentUser;
 
-  @override
-  void dispose() {
-    authModel.removeListener(_rebuild);
-    super.dispose();
-  }
-
-  void _rebuild() {
-    if (mounted) setState(() {});
-  }
-
-  Future<void> _signOut() async {
-    await authModel.signOut();
-    cartModel.clear();
-    favoritesModel.clear();
-    ordersModel.clear();
-    if (!mounted) return;
-    Navigator.pushReplacementNamed(context, '/login');
-  }
-
-  void _editName() {
-    final ctrl = TextEditingController(
-      text: authModel.currentUser?.displayName ?? '',
+    return Scaffold(
+      appBar: AppBar(title: const Text('Profile')),
+      body: user == null
+          ? _buildNotSignedIn(context)
+          : _buildSignedIn(context, user, authModel),
     );
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: AppColors.surface,
-        title: const Text('Edit Name', style: TextStyle(color: AppColors.textPrimary)),
-        content: TextField(
-          controller: ctrl,
-          decoration: const InputDecoration(hintText: 'Full name'),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel'),
-          ),
+  }
+
+  Widget _buildNotSignedIn(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Icons.person_outline, size: 72, color: AppColors.textMuted),
+          const SizedBox(height: 16),
+          Text('You are not signed in', style: Theme.of(context).textTheme.titleMedium),
+          const SizedBox(height: 16),
           ElevatedButton(
-            onPressed: () async {
-              final name = ctrl.text.trim();
-              Navigator.pop(ctx);
-              if (name.isEmpty) return;
-              await authModel.updateProfile(fullName: name);
-            },
-            child: const Text('Save'),
+            onPressed: () => Navigator.pushNamed(context, '/login'),
+            child: const Text('Sign In'),
           ),
         ],
       ),
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final user = authModel.currentUser;
-    final text = Theme.of(context).textTheme;
-
-    if (user == null) {
-      return Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.person_outline, size: 72, color: AppColors.textMuted),
-            const SizedBox(height: 16),
-            Text('You are not signed in', style: text.titleMedium),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () => Navigator.pushNamed(context, '/login'),
-              child: const Text('Sign In'),
-            ),
-          ],
-        ),
-      );
-    }
-
+  Widget _buildSignedIn(BuildContext context, User user, AuthModel authModel) {
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(22, 24, 22, 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Profile', style: text.titleLarge),
+          Text('Profile', style: Theme.of(context).textTheme.titleLarge),
           const SizedBox(height: 24),
           // Avatar + name + email row
           Row(
@@ -121,15 +77,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   children: [
                     Text(
                       user.displayName ?? 'No name set',
-                      style: text.titleMedium,
+                      style: Theme.of(context).textTheme.titleMedium,
                     ),
                     const SizedBox(height: 4),
-                    Text(user.email ?? '', style: text.bodyMedium),
+                    Text(user.email ?? '', style: Theme.of(context).textTheme.bodyMedium),
                     if (user.metadata.creationTime != null) ...[
                       const SizedBox(height: 4),
                       Text(
                         'Member since ${_fmtDate(user.metadata.creationTime!)}',
-                        style: text.labelSmall,
+                        style: Theme.of(context).textTheme.labelSmall,
                       ),
                     ],
                   ],
@@ -142,7 +98,38 @@ class _ProfileScreenState extends State<ProfileScreen> {
           _tile(
             icon: Icons.edit_outlined,
             label: 'Edit Profile',
-            onTap: _editName,
+            onTap: () {
+              final ctrl = TextEditingController(
+                text: user.displayName ?? '',
+              );
+              showDialog(
+                context: context,
+                builder: (ctx) => AlertDialog(
+                  backgroundColor: AppColors.surface,
+                  title: const Text('Edit Name',
+                      style: TextStyle(color: AppColors.textPrimary)),
+                  content: TextField(
+                    controller: ctrl,
+                    decoration: const InputDecoration(hintText: 'Full name'),
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(ctx),
+                      child: const Text('Cancel'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () async {
+                        final name = ctrl.text.trim();
+                        Navigator.pop(ctx);
+                        if (name.isEmpty) return;
+                        await authModel.updateProfile(fullName: name);
+                      },
+                      child: const Text('Save'),
+                    ),
+                  ],
+                ),
+              );
+            },
           ),
           _tile(
             icon: Icons.shopping_bag_outlined,
@@ -171,7 +158,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
           SizedBox(
             width: double.infinity,
             child: OutlinedButton.icon(
-              onPressed: _signOut,
+              onPressed: () async {
+                await authModel.signOut();
+                
+                context.read<CartModel>().clear();
+                context.read<FavoritesModel>().clear();
+                if (!mounted) return;
+                Navigator.pushReplacementNamed(context, '/login');
+              },
               icon: const Icon(Icons.logout, color: AppColors.danger),
               label: const Text(
                 'Sign Out',
@@ -180,7 +174,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               style: OutlinedButton.styleFrom(
                 side: const BorderSide(color: AppColors.danger),
                 minimumSize: const Size(double.infinity, 48),
-                shape: const StadiumBorder(),
+                shape: StadiumBorder(),
               ),
             ),
           ),
@@ -231,6 +225,5 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
   }
 
-  String _fmtDate(DateTime d) =>
-      '${d.day}/${d.month}/${d.year}';
+  String _fmtDate(DateTime d) => '${d.day}/${d.month}/${d.year}';
 }

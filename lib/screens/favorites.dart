@@ -1,43 +1,20 @@
 // favorites.dart
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../core/state/favorites_model.dart';
 import '../core/theme/app_colors.dart';
 import '../data/products.dart';
-import '../main.dart' show favoritesModel;
-import '../models/product.dart';
 import '../widgets/product_card.dart';
 
-class FavoritesScreen extends StatefulWidget {
+class FavoritesScreen extends StatelessWidget {
   const FavoritesScreen({super.key});
-
-  @override
-  State<FavoritesScreen> createState() => _FavoritesScreenState();
-}
-
-class _FavoritesScreenState extends State<FavoritesScreen> {
-  @override
-  void initState() {
-    super.initState();
-    favoritesModel.addListener(_rebuild);
-  }
-
-  @override
-  void dispose() {
-    favoritesModel.removeListener(_rebuild);
-    super.dispose();
-  }
-
-  void _rebuild() {
-    if (mounted) setState(() {});
-  }
-
-  List<Product> get _favProducts =>
-      products.where((p) => favoritesModel.contains(p.id)).toList();
 
   @override
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
-    final favs = _favProducts;
+    final favorites = context.watch<FavoritesModel>();
+    final favs = products.where((p) => favorites.contains(p.id)).toList();
 
     return Scaffold(
       appBar: AppBar(title: const Text('My Favorites')),
@@ -46,7 +23,8 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.favorite_border, size: 72, color: AppColors.textMuted),
+                  const Icon(Icons.favorite_border,
+                      size: 72, color: AppColors.textMuted),
                   const SizedBox(height: 16),
                   Text('No favorites yet', style: text.titleMedium),
                   const SizedBox(height: 8),
@@ -68,7 +46,8 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                 return ProductCard(
                   product: p,
                   isFavorite: true,
-                  onFavorite: () => favoritesModel.toggle(p.id),
+                  onFavorite: () =>
+                      context.read<FavoritesModel>().toggle(p.id),
                   onTap: () => Navigator.pushNamed(
                     context,
                     '/product_details',

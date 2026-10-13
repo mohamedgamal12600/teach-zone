@@ -1,9 +1,11 @@
 // orders.dart
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-import '../core/theme/app_colors.dart';
 import '../core/state/orders_model.dart';
-import '../main.dart' show ordersModel, authModel;
+import '../core/state/auth_model.dart';
+import '../core/theme/app_colors.dart';
+import '../core/utils/price_formatter.dart';
 
 class OrdersScreen extends StatefulWidget {
   const OrdersScreen({super.key});
@@ -20,26 +22,21 @@ class _OrdersScreenState extends State<OrdersScreen> {
   void initState() {
     super.initState();
     _load();
-    ordersModel.addListener(_rebuild);
   }
 
   @override
   void dispose() {
-    ordersModel.removeListener(_rebuild);
     super.dispose();
   }
 
-  void _rebuild() {
-    if (mounted) setState(() {});
-  }
-
   Future<void> _load() async {
-    final uid = authModel.currentUser?.uid;
+    final uid = context.read<AuthModel>().currentUser?.uid;
     if (uid == null) {
       if (mounted) setState(() => _loading = false);
       return;
     }
     try {
+      final ordersModel = context.read<OrdersModel>();
       await ordersModel.loadOrders(uid);
     } catch (e) {
       if (mounted) setState(() => _error = e.toString());
@@ -59,7 +56,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
       body = Center(
         child: Text('Failed to load orders:\n$_error', style: text.bodyMedium),
       );
-    } else if (ordersModel.orders.isEmpty) {
+    } else if (context.watch<OrdersModel>().orders.isEmpty) {
       body = Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -75,9 +72,11 @@ class _OrdersScreenState extends State<OrdersScreen> {
     } else {
       body = ListView.separated(
         padding: const EdgeInsets.all(16),
-        itemCount: ordersModel.orders.length,
+        itemCount: context.watch<OrdersModel>().orders.length,
         separatorBuilder: (_, _) => const SizedBox(height: 12),
-        itemBuilder: (_, i) => _OrderCard(order: ordersModel.orders[i]),
+        itemBuilder: (_, i) => _OrderCard(
+          order: context.watch<OrdersModel>().orders[i],
+        ),
       );
     }
 
@@ -92,17 +91,6 @@ class _OrderCard extends StatelessWidget {
   const _OrderCard({required this.order});
 
   final AppOrder order;
-
-  String _fmt(double v) {
-    final s = v.toStringAsFixed(0);
-    final buf = StringBuffer();
-    final len = s.length;
-    for (var i = 0; i < len; i++) {
-      if (i > 0 && (len - i) % 3 == 0) buf.write(',');
-      buf.write(s[i]);
-    }
-    return buf.toString();
-  }
 
   Color _chipColor(String status) => switch (status) {
         'active' => AppColors.accent,
@@ -119,7 +107,7 @@ class _OrderCard extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(AppRadius.card),
+        borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -133,7 +121,7 @@ class _OrderCard extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
                   color: _chipColor(order.status).withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(AppRadius.pill),
+                  borderRadius: BorderRadius.circular(8),
                   border: Border.all(color: _chipColor(order.status)),
                 ),
                 child: Text(
@@ -156,11 +144,11 @@ class _OrderCard extends StatelessWidget {
               child: Row(
                 children: [
                   Expanded(
-                    child: Text('${li.productName} × ${li.quantity}',
+                    child: Text('${li.productName} x ${li.quantity}',
                         style: text.bodyMedium),
                   ),
                   Text(
-                    'EGP ${_fmt(li.unitPrice * li.quantity)}',
+                    PriceFormatter.formatWithCurrency(li.unitPrice * li.quantity),
                     style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
                   ),
                 ],
@@ -173,7 +161,7 @@ class _OrderCard extends StatelessWidget {
             children: [
               const Text('Total', style: TextStyle(fontWeight: FontWeight.w600)),
               Text(
-                'EGP ${_fmt(order.total)}',
+                PriceFormatter.formatWithCurrency(order.total),
                 style: const TextStyle(
                   color: AppColors.accent,
                   fontWeight: FontWeight.w700,

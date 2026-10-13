@@ -1,39 +1,48 @@
 // cart.dart
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../core/state/cart_model.dart';
+import '../../models/cart_item.dart';
+import '../core/state/auth_model.dart';
 import '../core/theme/app_colors.dart';
 import '../core/utils/price_formatter.dart';
-import '../main.dart' show cartModel, authModel;
 
 class CartScreen extends StatelessWidget {
   const CartScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return ListenableBuilder(
-      listenable: cartModel,
-      builder: (context, _) {
-        final items = cartModel.items;
-        if (items.isEmpty) return _emptyCart(context);
-        return Column(
-          children: [
-            _header(context),
-            Expanded(
-              child: ListView.separated(
-                padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
-                itemCount: items.length,
-                separatorBuilder: (_, _) => const SizedBox(height: 12),
-                itemBuilder: (_, i) => _CartTile(item: items[i]),
+    final cartModel = context.read<CartModel>();
+    final authModel = context.read<AuthModel>();
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('My Cart')),
+      body: ListenableBuilder(
+        listenable: cartModel,
+        builder: (context, _) {
+          final items = cartModel.items;
+          if (items.isEmpty) return _emptyCart(context);
+          return Column(
+            children: [
+              _header(context, cartModel, authModel),
+              Expanded(
+                child: ListView.separated(
+                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+                  itemCount: items.length,
+                  separatorBuilder: (_, _) => const SizedBox(height: 12),
+                  itemBuilder: (_, i) => _CartTile(item: items[i]),
+                ),
               ),
-            ),
-            _footer(context),
-          ],
-        );
-      },
+              _footer(context, cartModel, authModel),
+            ],
+          );
+        },
+      ),
     );
   }
 
-  Widget _header(BuildContext context) {
+  Widget _header(BuildContext context, CartModel cartModel, AuthModel authModel) {
     final text = Theme.of(context).textTheme;
     return Padding(
       padding: const EdgeInsets.fromLTRB(22, 16, 22, 0),
@@ -50,27 +59,30 @@ class CartScreen extends StatelessWidget {
     );
   }
 
-  Widget _footer(BuildContext context) {
+  Widget _footer(BuildContext context, CartModel cartModel, AuthModel authModel) {
     return Container(
       padding: const EdgeInsets.fromLTRB(22, 16, 22, 24),
       decoration: const BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.card)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       child: Column(
         children: [
-          _SummaryRow(label: 'Subtotal', value: 'EGP ${_fmt(cartModel.subtotal)}'),
+          _SummaryRow(
+            label: 'Subtotal',
+            value: PriceFormatter.formatWithCurrency(cartModel.subtotal),
+          ),
           const SizedBox(height: 8),
           _SummaryRow(
             label: 'Delivery',
             value: cartModel.deliveryCharge == 0
                 ? 'Free'
-                : 'EGP ${_fmt(cartModel.deliveryCharge)}',
+                : PriceFormatter.formatWithCurrency(cartModel.deliveryCharge),
           ),
           const Divider(height: 24),
           _SummaryRow(
             label: 'Total',
-            value: 'EGP ${_fmt(cartModel.total)}',
+            value: PriceFormatter.formatWithCurrency(cartModel.total),
             bold: true,
           ),
           const SizedBox(height: 16),
@@ -91,7 +103,7 @@ class CartScreen extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(top: 8),
               child: Text(
-                'Add EGP ${_fmt(CartLimits.freeDeliveryThreshold - cartModel.subtotal)} more for free delivery',
+                'Add ${PriceFormatter.formatWithCurrency(CartLimits.freeDeliveryThreshold - cartModel.subtotal)} more for free delivery',
                 style: Theme.of(context).textTheme.labelSmall,
                 textAlign: TextAlign.center,
               ),
@@ -119,7 +131,7 @@ class CartScreen extends StatelessWidget {
   }
 }
 
-/// Shared delivery constants.
+// Shared delivery constants.
 class CartLimits {
   static const double deliveryFee = 50.0;
   static const double freeDeliveryThreshold = 2000.0;
@@ -128,7 +140,7 @@ class CartLimits {
 class _CartTile extends StatelessWidget {
   const _CartTile({required this.item});
 
-  final dynamic item; // CartItem
+  final CartItem item;
 
   @override
   Widget build(BuildContext context) {
@@ -138,7 +150,7 @@ class _CartTile extends StatelessWidget {
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(AppRadius.card),
+        borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
         children: [
@@ -168,7 +180,7 @@ class _CartTile extends StatelessWidget {
                     style: text.bodyLarge?.copyWith(fontSize: 13)),
                 const SizedBox(height: 4),
                 Text(
-                  'EGP ${_fmt(p.price)}',
+                  PriceFormatter.formatWithCurrency(p.price),
                   style: TextStyle(
                     color: AppColors.accent,
                     fontWeight: FontWeight.w600,
@@ -183,7 +195,7 @@ class _CartTile extends StatelessWidget {
             children: [
               _QtyBtn(
                 icon: Icons.add,
-                onTap: () => cartModel.increase(p.id),
+                onTap: () => context.read<CartModel>().increase(p.id),
               ),
               const SizedBox(height: 4),
               Text('${item.quantity}',
@@ -192,12 +204,12 @@ class _CartTile extends StatelessWidget {
               const SizedBox(height: 4),
               _QtyBtn(
                 icon: Icons.remove,
-                onTap: () => cartModel.decrease(p.id),
+                onTap: () => context.read<CartModel>().decrease(p.id),
               ),
             ],
           ),
           IconButton(
-            onPressed: () => cartModel.remove(p.id),
+            onPressed: () => context.read<CartModel>().remove(p.id),
             icon: const Icon(Icons.delete_outline, size: 20, color: AppColors.danger),
           ),
         ],

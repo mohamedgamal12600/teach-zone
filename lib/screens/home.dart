@@ -1,9 +1,10 @@
-// home.dart
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../core/state/cart_model.dart';
+import '../core/state/favorites_model.dart';
 import '../core/theme/app_colors.dart';
 import '../data/products.dart';
-import '../main.dart' show cartModel, favoritesModel;
 import '../models/product.dart';
 import '../widgets/app_bottom_bar.dart';
 import '../widgets/category_tabs.dart';
@@ -30,24 +31,10 @@ class _HomeScreenState extends State<HomeScreen> {
   String _query = '';
 
   @override
-  void initState() {
-    super.initState();
-    // Rebuild when cart or favorites change so the badge & cards update.
-    cartModel.addListener(_onModelChange);
-    favoritesModel.addListener(_onModelChange);
-  }
-
-  @override
   void dispose() {
     _pageController.dispose();
     _search.dispose();
-    cartModel.removeListener(_onModelChange);
-    favoritesModel.removeListener(_onModelChange);
     super.dispose();
-  }
-
-  void _onModelChange() {
-    if (mounted) setState(() {});
   }
 
   List<Product> get _visible => products.where((p) {
@@ -169,15 +156,15 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       child: ProductCard(
                         product: p,
-                        isFavorite: favoritesModel.contains(p.id),
-                        onFavorite: () => favoritesModel.toggle(p.id),
+                        isFavorite: context.watch<FavoritesModel>().contains(p.id),
+                        onFavorite: () => context.read<FavoritesModel>().toggle(p.id),
                         onTap: () => Navigator.pushNamed(
                           context,
                           '/product_details',
                           arguments: p,
                         ),
                         onAddToCart: () {
-                          cartModel.add(p);
+                          context.read<CartModel>().add(p);
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text('${p.name} added to cart'),
@@ -196,16 +183,18 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final cartCount = context.watch<CartModel>().itemCount;
+
     return Scaffold(
       body: SafeArea(
         child: IndexedStack(
           index: _nav,
-          children: [_homeBody(), const CartScreen(), const ProfileScreen()],
+          children: [_homeBody(), CartScreen(), ProfileScreen()],
         ),
       ),
       bottomNavigationBar: AppBottomBar(
         index: _nav,
-        cartCount: cartModel.itemCount,
+        cartCount: cartCount,
         onChanged: (i) => setState(() => _nav = i),
       ),
     );
