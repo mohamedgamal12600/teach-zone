@@ -1,5 +1,5 @@
-// onboarding.dart
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/theme/app_colors.dart';
 
@@ -41,7 +41,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     super.dispose();
   }
 
-  void _finish() {
+  Future<void> _finish() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('onboarding_seen', true);
+    } catch (_) {}
+    if (!mounted) return;
     Navigator.pushReplacementNamed(context, '/login');
   }
 
