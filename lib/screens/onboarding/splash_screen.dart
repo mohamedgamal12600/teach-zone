@@ -1,6 +1,6 @@
-// splash.dart
 import 'package:flutter/material.dart';
 
+import '../../core/constants/app_assets.dart';
 import '../../core/theme/app_colors.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -35,25 +35,18 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.surfaceDark,
+      backgroundColor: AppColors.background,
       body: Center(
         child: FadeTransition(
           opacity: _fade,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Container(
-                width: 90,
-                height: 90,
-                decoration: BoxDecoration(
-                  color: AppColors.accent,
-                  borderRadius: BorderRadius.circular(AppRadius.card),
-                ),
-                child: const Icon(
-                  Icons.bolt,
-                  size: 52,
-                  color: AppColors.surfaceDark,
-                ),
+              Image.asset(
+                AppAssets.splashLogo,
+                width: 110,
+                height: 110,
+                fit: BoxFit.contain,
               ),
               const SizedBox(height: 24),
               Text(

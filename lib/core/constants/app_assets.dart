@@ -4,6 +4,7 @@ class AppAssets {
   AppAssets._();
 
   static const String _base = 'assets/images';
+  static const String splashLogo = '$_base/techzone_splash_logo.png';
 
   // Fallback placeholder for error handling
   static const String placeholder = '$_base/ps5.png';

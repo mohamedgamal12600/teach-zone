@@ -22,7 +22,7 @@ lib/
   main.dart                          # MultiProvider setup (auth, cart, favorites, orders)
   core/
     constants/
-      app_assets.dart                # 35 asset path constants
+      app_assets.dart                # Product image and splash-logo asset paths
     services/
       auth_service.dart              # Firebase Auth + profile sync
       firestore_service.dart         # Orders CRUD
@@ -85,7 +85,7 @@ lib/
     category_tabs.dart
     color_dot.dart
     app_bottom_bar.dart
-assets/images/                       # 35 PNG images (snake_case)
+assets/images/                       # 35 product PNGs plus the TechZone splash logo
 ```
 
 ## Features Completed
@@ -98,6 +98,11 @@ assets/images/                       # 35 PNG images (snake_case)
 | 4 | ✅ | Firebase Auth/Firestore → dedicated services (auth_service, firestore_service) |
 | 5 | ✅ | Feature-based folders, split widgets/controllers, loading/empty/error states |
 | 6 | ✅ | Cleanup, dart format, analyzer warnings, final folder tree |
+| 7 | ✅ | TechZone app icon and splash branding for Android, iOS, and the Flutter launch screen |
+
+## App Icon and Splash Screen
+
+The TechZone logo is wired into the Android launcher/adaptive icon and Android splash resources, the iOS app icon and launch screen, and the Flutter splash screen. The Flutter splash uses `assets/images/techzone_splash_logo.png`; native platform resources are kept in the standard Android `res/` and iOS `Assets.xcassets/` locations.
 
 ## Running
 
@@ -110,7 +115,7 @@ flutter build apk
 
 ## Build Requirements
 
-- Flutter SDK 3.22+
+- Flutter/Dart SDK compatible with the `^3.7.0` Dart constraint in `pubspec.yaml`
 - Android SDK (API 34+)
 - Firebase project with Auth (email/password) + Firestore enabled
 - `firebase_options.dart` generated via FlutterFire CLI
